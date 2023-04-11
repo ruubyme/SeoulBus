@@ -13,6 +13,31 @@ const busInfos: BusInfo[] = [
   { stId: "118000225", busRouteId: "100100094", ord: "94" },
 ];
 
+/**정류소 버스도착정보 조회 */
+const getArrInfoByRouteList = async (busInfos: BusInfo[]) => {
+  const resultList = [];
+
+  for (const { stId, busRouteId, ord } of busInfos) {
+    const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRoute?ServiceKey=${API_KEY}&stId=${stId}&busRouteId=${busRouteId}&ord=${ord}&resultType=json`;
+    const response = await axios.get(url);
+    resultList.push(response.data.msgBody.itemList);
+  }
+  return resultList;
+};
+
+/**routeId 얻어오기 */
+// const getRouteId = async (arsId: string) => {
+//   const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?ServiceKey=${API_KEY}&arsId=${arsId}&resultType=json`;
+
+//   const response = await axios.get(url);
+//   busRouteIds.push(
+//     response.data.msgBody.itemList.map((item: string) => {
+//       return item.busRouteId;
+//     })
+//   );
+//   console.log(busRouteIds);
+// };
+
 // /**routeId 얻어오기 */
 // const getRouteId = async () => {
 //   // const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?ServiceKey=${API_KEY}&arsId=${arsId}&resultType=json`;
@@ -34,40 +59,6 @@ const busInfos: BusInfo[] = [
 //   //   })
 //   // );
 //   // console.log(busRouteIds);
-// };
-
-/**정류소 버스도착정보 조회 */
-const getArrInfoByRouteList = async (busInfos: BusInfo[]) => {
-  const resultList = [];
-
-  for (const { stId, busRouteId, ord } of busInfos) {
-    const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRoute?ServiceKey=${API_KEY}&stId=${stId}&busRouteId=${busRouteId}&ord=${ord}&resultType=json`;
-    const response = await axios.get(url);
-    resultList.push(response.data.msgBody.itemList);
-  }
-  return resultList;
-
-  // const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/arrive/getArrInfoByRoute?ServiceKey=${API_KEY}&stId=${stId}&busRouteId=${busRouteId}&ord=${ord}&resultType=json`;
-
-  // const response = await axios.get(url);
-  // console.log(response);
-
-  // response.data.msgBody.itemList.map((busInfo: string) => {
-  //   console.log(busInfo.stNm);
-  // });
-};
-
-/**routeId 얻어오기 */
-// const getRouteId = async (arsId: string) => {
-//   const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/stationinfo/getRouteByStation?ServiceKey=${API_KEY}&arsId=${arsId}&resultType=json`;
-
-//   const response = await axios.get(url);
-//   busRouteIds.push(
-//     response.data.msgBody.itemList.map((item: string) => {
-//       return item.busRouteId;
-//     })
-//   );
-//   console.log(busRouteIds);
 // };
 
 export { getArrInfoByRouteList };

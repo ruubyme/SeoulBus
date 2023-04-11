@@ -5,7 +5,16 @@ import { getArrInfoByRouteList } from "./api";
 const API_KEY = import.meta.env.VITE_API_KEY;
 
 function App() {
-  //const arsIds: string[] = ["19317", "19192"];
+  const [busResult, setBusResult] = useState<BusResult[]>([]);
+
+  interface BusResult {
+    arrmsg1: string;
+    arrmsg2: string;
+    arsId: string; //정류소번호
+    rtNm: string; //버스번호
+    stNm: string; //정류소이름
+    routeType: string; //버스타입
+  }
 
   interface BusInfo {
     stId: string;
@@ -20,17 +29,37 @@ function App() {
 
   const getResult = async () => {
     const result = await getArrInfoByRouteList(busInfos);
-    console.log(result);
+    const busResultArr: BusResult[] = result.flatMap((bus) => {
+      return bus.flatMap((obj: BusResult) => {
+        const { arrmsg1, arrmsg2, arsId, rtNm, stNm, routeType } = obj;
+        return { arrmsg1, arrmsg2, arsId, rtNm, stNm, routeType };
+      });
+    });
+    setBusResult(busResultArr);
+    console.log(busResult);
   };
 
   useEffect(() => {
     getResult();
-  }, []);
+  }, [busResult]);
 
   return (
-    <div className="App">
-      <h1>Vite + React</h1>
-    </div>
+    <>
+      <div className="App">
+        <h1>버스도착예정시간</h1>
+      </div>
+
+      <div>
+        {busResult.map((bus, index) => (
+          <div key={index}>
+            <div>정류소: {bus.stNm} </div>
+            <div>버스: {bus.rtNm} </div>
+            <div>arrmsg1: {bus.arrmsg1} </div>
+            <div>arrmsg2: {bus.arrmsg2} </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
