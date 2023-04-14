@@ -90,10 +90,6 @@ function App() {
 
   return (
     <>
-      <div className="App">
-        <h1>버스도착예정시간</h1>
-      </div>
-
       <div>
         {busResultList.map((busResults, index) => {
           const stationName = busResults[0].stNm;
@@ -107,9 +103,9 @@ function App() {
           });
 
           return (
-            <div key={index}>
-              <h2>{stationName}</h2>
-              <h2>다음 정류장: {nextStationName}</h2>
+            <div key={index} className="bg-zinc-50">
+              <h2 className="text-xl">{stationName}</h2>
+              <h2 className="text-lg text-gray-400">{nextStationName}</h2>
               <ul>{busInfoList}</ul>
             </div>
           );
