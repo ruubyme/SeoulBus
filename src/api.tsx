@@ -22,6 +22,26 @@ const getArrInfoByRouteList = async (busInfos: BusInfo[]) => {
     const response = await axios.get(url);
     resultList.push(response.data.msgBody.itemList);
   }
+  //2차원배열 > 1차원배열로 수정
+  return resultList.flatMap((bus) => bus);
+};
+
+/**다음 정류장 조회 */
+const getStaionsByRouteList = async (busInfos: BusInfo[]) => {
+  const resultList = [];
+
+  for (const { busRouteId, ord } of busInfos) {
+    const seq: string = String(Number(ord) + 1);
+    const url = `https://cors-anywhere.herokuapp.com/http://ws.bus.go.kr/api/rest/busRouteInfo/getStaionByRoute?ServiceKey=${API_KEY}&busRouteId=${busRouteId}&resultType=json`;
+    const response = await axios.get(url);
+
+    const { data } = response;
+    const stationList = data.msgBody.itemList;
+    const station = stationList.find((station: any) => station.seq === seq);
+    const stationNm = station.stationNm;
+
+    resultList.push(stationNm);
+  }
   return resultList;
 };
 
@@ -61,4 +81,4 @@ const getArrInfoByRouteList = async (busInfos: BusInfo[]) => {
 //   // console.log(busRouteIds);
 // };
 
-export { getArrInfoByRouteList };
+export { getArrInfoByRouteList, getStaionsByRouteList };
