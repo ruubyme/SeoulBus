@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getArrInfoByRouteList } from "./api";
+import { getArrInfoByRouteList, getStaionsByRouteList } from "./api";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 
@@ -15,6 +15,7 @@ function App() {
     rtNm: string; //버스번호
     stNm: string; //정류소이름
     routeType: string; //버스타입
+    nextStationName: string | ""; //다음정류소 이름
   }
 
   interface BusInfo {
@@ -49,14 +50,26 @@ function App() {
     ],
   ];
 
-  const getResult = async (busStaion: BusInfo[], index: number) => {
-    const result = await getArrInfoByRouteList(busStaion);
-    const busResultArr: BusResult[] = result.flatMap((bus) => {
-      return bus.flatMap((obj: BusResult) => {
+  const getResult = async (busStation: BusInfo[], index: number) => {
+    const result = await getArrInfoByRouteList(busStation);
+    const nextStation = await getStaionsByRouteList(busStation);
+    console.log(nextStation);
+    const busResultArr: BusResult[] = result.flatMap(
+      (obj: BusResult, idx: number) => {
         const { arrmsg1, arrmsg2, arsId, rtNm, stNm, routeType } = obj;
-        return { arrmsg1, arrmsg2, arsId, rtNm, stNm, routeType };
-      });
-    });
+        const nextStationName = nextStation[idx];
+        console.log(nextStationName);
+        return {
+          arrmsg1,
+          arrmsg2,
+          arsId,
+          rtNm,
+          stNm,
+          routeType,
+          nextStationName,
+        };
+      }
+    );
     setBusResult(busResultArr);
 
     setBusResultList((prevBusResultList) => {
@@ -66,6 +79,7 @@ function App() {
     });
 
     console.log(busResultList);
+    //console.log(nextStation);
   };
 
   useEffect(() => {
@@ -83,6 +97,7 @@ function App() {
       <div>
         {busResultList.map((busResults, index) => {
           const stationName = busResults[0].stNm;
+          const nextStationName = busResults[0].nextStationName;
           const busInfoList = busResults.map((busResult) => {
             return (
               <li key={busResult.rtNm}>
@@ -94,6 +109,7 @@ function App() {
           return (
             <div key={index}>
               <h2>{stationName}</h2>
+              <h2>다음 정류장: {nextStationName}</h2>
               <ul>{busInfoList}</ul>
             </div>
           );
