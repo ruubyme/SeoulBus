@@ -96,17 +96,35 @@ function App() {
           const nextStationName = busResults[0].nextStationName;
           const busInfoList = busResults.map((busResult) => {
             return (
-              <li key={busResult.rtNm}>
-                {busResult.rtNm}: {busResult.arrmsg1} / {busResult.arrmsg2}
+              <li key={busResult.rtNm} className="flex justify-start">
+                <div
+                  className={
+                    busResult.routeType === "2" || busResult.routeType === "4"
+                      ? "text-green-500 flex items-center w-40"
+                      : busResult.routeType === "3"
+                      ? "text-blue-500 flex items-center w-40"
+                      : ""
+                  }
+                >
+                  {busResult.rtNm}
+                </div>
+                <div className="flex flex-col ml-10">
+                  <div>{busResult.arrmsg1}</div>
+                  <div>{busResult.arrmsg2}</div>
+                </div>
               </li>
             );
           });
 
           return (
-            <div key={index} className="bg-zinc-50">
-              <h2 className="text-xl">{stationName}</h2>
-              <h2 className="text-lg text-gray-400">{nextStationName}</h2>
-              <ul>{busInfoList}</ul>
+            <div key={index} className="bg-zinc-50 divide-y my-1 pl-2 py-1">
+              <div>
+                <div className="text-lg">{stationName}</div>
+                <div className="text-m text-gray-400">{nextStationName}</div>
+              </div>
+              <div>
+                <ul className="divide-y">{busInfoList}</ul>
+              </div>
             </div>
           );
         })}
