@@ -6,6 +6,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 
 function App() {
   const [busResult, setBusResult] = useState<BusResult[]>([]);
+  const [busResultList, setBusResultList] = useState<Array<BusResult[]>>([]);
 
   interface BusResult {
     arrmsg1: string;
@@ -22,13 +23,34 @@ function App() {
     ord: string;
   }
 
-  const busInfos: BusInfo[] = [
-    { stId: "118000225", busRouteId: "118900006", ord: "29" },
-    { stId: "118000225", busRouteId: "100100094", ord: "94" },
+  const busStaions: BusInfo[][] = [
+    [
+      //영문초등학교
+      { stId: "118000225", busRouteId: "118900006", ord: "29" },
+      { stId: "118000225", busRouteId: "100100094", ord: "94" },
+    ],
+    [
+      //문래역
+      { stId: "118000227", busRouteId: "100100303", ord: "71" },
+      { stId: "118000227", busRouteId: "100100289", ord: "17" },
+    ],
+    [
+      //경방타임스퀘어
+      { stId: "118000465", busRouteId: "100100601", ord: "20" },
+      { stId: "118000465", busRouteId: "100100288", ord: "67" },
+      { stId: "118000465", busRouteId: "100100312", ord: "52" },
+      { stId: "118000465", busRouteId: "115000010", ord: "37" },
+    ],
+    [
+      //문래힐스테이트
+      { stId: "118000515", busRouteId: "100100094", ord: "6" },
+      { stId: "118000515", busRouteId: "118900006", ord: "14" },
+      { stId: "118000515", busRouteId: "100100303", ord: "68" },
+    ],
   ];
 
-  const getResult = async () => {
-    const result = await getArrInfoByRouteList(busInfos);
+  const getResult = async (busStaion: BusInfo[], index: number) => {
+    const result = await getArrInfoByRouteList(busStaion);
     const busResultArr: BusResult[] = result.flatMap((bus) => {
       return bus.flatMap((obj: BusResult) => {
         const { arrmsg1, arrmsg2, arsId, rtNm, stNm, routeType } = obj;
@@ -36,11 +58,20 @@ function App() {
       });
     });
     setBusResult(busResultArr);
-    console.log(busResult);
+
+    setBusResultList((prevBusResultList) => {
+      const newList = [...prevBusResultList];
+      newList[index] = busResultArr;
+      return newList;
+    });
+
+    console.log(busResultList);
   };
 
   useEffect(() => {
-    getResult();
+    busStaions.forEach((busStaion, index) => {
+      getResult(busStaion, index);
+    });
   }, [busResult]);
 
   return (
@@ -50,14 +81,23 @@ function App() {
       </div>
 
       <div>
-        {busResult.map((bus, index) => (
-          <div key={index}>
-            <div>정류소: {bus.stNm} </div>
-            <div>버스: {bus.rtNm} </div>
-            <div>arrmsg1: {bus.arrmsg1} </div>
-            <div>arrmsg2: {bus.arrmsg2} </div>
-          </div>
-        ))}
+        {busResultList.map((busResults, index) => {
+          const stationName = busResults[0].stNm;
+          const busInfoList = busResults.map((busResult) => {
+            return (
+              <li key={busResult.rtNm}>
+                {busResult.rtNm}: {busResult.arrmsg1} / {busResult.arrmsg2}
+              </li>
+            );
+          });
+
+          return (
+            <div key={index}>
+              <h2>{stationName}</h2>
+              <ul>{busInfoList}</ul>
+            </div>
+          );
+        })}
       </div>
     </>
   );
