@@ -7,15 +7,18 @@ export const getSearchStationNm = async (keyword: string) => {
     `http://localhost:3000/search?keyword=${keyword}`
   );
   const responseData: Station[] = response.data.msgBody.itemList;
-  const searchStationList: Station[] = responseData.map(
-    ({ stId, stNm, arsId }) => ({
-      stId,
-      stNm,
-      arsId,
-    })
-  );
-
-  return searchStationList;
+  if (responseData) {
+    const searchStationList: Station[] = responseData.map(
+      ({ stId, stNm, arsId }) => ({
+        stId,
+        stNm,
+        arsId,
+      })
+    );
+    return searchStationList;
+  } else {
+    return false;
+  }
 };
 
 /**해당 정류소 모든 노선 검색 */
@@ -67,7 +70,17 @@ export const getArrInfoByRouteList = async (
   const response = await axios.get(`
     http://localhost:3000/busArriveInfo?busRouteId=${busRouteId}&stId=${stId}&seq=${seq}
   `);
-  const responseData: { arrmsg1: string; arrmsg2: string } =
-    response.data.msgBody.itemList[0];
-  return { arrmsg1: responseData.arrmsg1, arrmsg2: responseData.arrmsg2 };
+  const responseData: { arrmsg1: string; arrmsg2: string }[] =
+    response.data.msgBody.itemList;
+  if (responseData) {
+    return {
+      arrmsg1: responseData[0].arrmsg1,
+      arrmsg2: responseData[0].arrmsg2,
+    };
+  } else {
+    return {
+      arrmsg: "서울 외 지역버스",
+      arrmsg2: "서울 외 지역버스",
+    };
+  }
 };

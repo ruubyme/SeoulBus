@@ -6,36 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { Station } from "../src/type";
 
 export const Main: React.FC = () => {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const { data: searchStationList, isLoading } = useQuery(
-    ["searchResults"],
-    () => getSearchStationNm(searchKeyword),
-    {
-      enabled: false,
-    }
-  );
-
-  const handleSearch = async (keyword: string) => {
-    await queryClient.prefetchQuery("searchStationList", () =>
-      getSearchStationNm(keyword)
-    );
-
-    const latestSearchResults =
-      queryClient.getQueryData<Station[]>("searchStationList");
-    navigate(`/search?keyword=${searchKeyword}`, {
-      state: { latestSearchResults },
-    });
-  };
-
   return (
     <>
-      <SearchBar
-        keyword={searchKeyword}
-        setKeyword={setSearchKeyword}
-        onSearch={handleSearch}
-      />
+      <SearchBar />
 
       {/* {isLoading && <div>Loading...</div>} */}
 

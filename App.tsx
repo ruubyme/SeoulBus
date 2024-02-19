@@ -6,7 +6,7 @@ import { QueryClientProvider, QueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import SearchList from "./component/SearchList";
-import { BusStation } from "./component/BusStation";
+import { BusStationPage } from "./component/BusStationPage";
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
@@ -16,7 +16,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/search" element={<SearchList />} />
-          <Route path="/busStation" element={<BusStation />} />
+          <Route path="/busStation" element={<BusStationPage />} />
         </Routes>
       </BrowserRouter>
       <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
