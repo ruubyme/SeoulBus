@@ -1,7 +1,6 @@
 import { useLocation, Link } from "react-router-dom";
 import { Station } from "../src/type";
-import { SearchBar } from "./SearchBar";
-import { useEffect } from "react";
+import SearchBar from "./SearchBar";
 
 interface SearchItemPros {
   station: Station;
@@ -20,10 +19,8 @@ const SearchItem: React.FC<SearchItemPros> = ({ station }) => {
 };
 
 const SearchList: React.FC = () => {
-  const { state, search } = useLocation();
+  const { state } = useLocation();
   const searchStationList = state.latestSearchResults;
-  const queryParams = new URLSearchParams(location.search);
-  const keyword = queryParams.get("keyword");
 
   return (
     <>

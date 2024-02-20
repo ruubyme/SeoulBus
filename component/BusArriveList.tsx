@@ -27,20 +27,18 @@ export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
   };
 
   return (
-    <>
-      <li key={bus.busRouteId} className="flex pl-2 py-2 border-b">
-        <div className="w-40">
-          <p className={`text-lg text-${getBusColor(bus.busRouteType)}-500`}>
-            {bus.busRouteNm}
-          </p>
-          <p className="text-sm text-gray-500">{bus.nextStationNm || "종점"}</p>
-        </div>
-        <div>
-          <p className="text-sm">{bus.arrmsg1}</p>
-          <p className="text-sm">{bus.arrmsg2}</p>
-        </div>
-      </li>
-    </>
+    <li key={bus.busRouteId} className="flex pl-2 py-2 border-b">
+      <div className="w-40">
+        <p className={`text-lg text-${getBusColor(bus.busRouteType)}-500`}>
+          {bus.busRouteNm}
+        </p>
+        <p className="text-sm text-gray-500">{bus.nextStationNm || "종점"}</p>
+      </div>
+      <div>
+        <p className="text-sm">{bus.arrmsg1}</p>
+        <p className="text-sm">{bus.arrmsg2}</p>
+      </div>
+    </li>
   );
 };
 
