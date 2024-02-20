@@ -29,8 +29,11 @@ const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
     const recentKeywords: string[] = storedKeywords
       ? JSON.parse(storedKeywords)
       : [];
-    const updatedKeywords = [...recentKeywords, keyword];
-    localStorage.setItem("recentKeywords", JSON.stringify(updatedKeywords));
+    //중복 저장 방지
+    if (!recentKeywords.includes(keyword)) {
+      const updatedKeywords = [...recentKeywords, keyword];
+      localStorage.setItem("recentKeywords", JSON.stringify(updatedKeywords));
+    }
   };
 
   const handleSearch = async (keyword: string) => {
