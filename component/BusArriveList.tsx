@@ -27,7 +27,7 @@ export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
   };
 
   return (
-    <li key={bus.busRouteId} className="flex pl-2 py-2 border-b">
+    <li className="flex pl-2 py-2 border-b">
       <div className="w-40">
         <p className={`text-lg text-${getBusColor(bus.busRouteType)}-500`}>
           {bus.busRouteNm}
@@ -55,7 +55,6 @@ export const BusArriveList: React.FC<{ busArriveList?: BusStation[] }> = ({
     }
     groupedByBusType[busRouteType].push(bus);
   });
-  console.log(groupedByBusType);
   return (
     <>
       {Object.entries(groupedByBusType).map(([type, buses]) => (
@@ -65,7 +64,7 @@ export const BusArriveList: React.FC<{ busArriveList?: BusStation[] }> = ({
           </h2>
           <ul>
             {buses.map((bus) => (
-              <BusArriveItem bus={bus} />
+              <BusArriveItem key={bus.busRouteId} bus={bus} />
             ))}
           </ul>
         </div>

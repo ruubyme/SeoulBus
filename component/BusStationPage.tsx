@@ -55,19 +55,19 @@ export const BusStationPage: React.FC = () => {
 
   return (
     <div>
-      {isLoadingBusRoute ||
-      isLoadingBusStationSeqList ||
-      isLoadingBussArriveList ? (
-        <p>로딩 중 ...</p>
-      ) : (
-        <div className="h-screen">
-          <div className="h-1/5 flex flex-col justify-center bg-gray-400">
-            <p className="text-center text-lg text-white">{arsId}</p>
-            <p className="text-center text-white text-xl">{stNm}</p>
-          </div>
-          <BusArriveList busArriveList={busArriveList} />
+      <div className="h-screen">
+        <div className="h-1/5 flex flex-col justify-center bg-gray-400">
+          <p className="text-center text-lg text-white">{arsId}</p>
+          <p className="text-center text-white text-xl">{stNm}</p>
         </div>
-      )}
+        {isLoadingBusRoute ||
+        isLoadingBusStationSeqList ||
+        isLoadingBussArriveList ? (
+          <div className="animate-spin w-10 h-10 rounded-full border-t-2 border-blue-500"></div>
+        ) : (
+          <BusArriveList busArriveList={busArriveList} />
+        )}
+      </div>
     </div>
   );
 };
