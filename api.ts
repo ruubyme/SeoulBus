@@ -17,7 +17,7 @@ export const getSearchStationNm = async (keyword: string) => {
     );
     return searchStationList;
   } else {
-    return false;
+    return undefined;
   }
 };
 

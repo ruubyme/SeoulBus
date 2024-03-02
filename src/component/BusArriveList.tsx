@@ -1,4 +1,4 @@
-import { BusStation } from "../src/type";
+import { BusStation } from "../type";
 
 const busTypeArray: Record<string, string> = {
   "0": "공용버스",

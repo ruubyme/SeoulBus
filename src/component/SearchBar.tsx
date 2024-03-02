@@ -1,8 +1,15 @@
 import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
 import { useQuery, useQueryClient } from "react-query";
-import { getSearchStationNm } from "../api";
-import { Station } from "../src/type";
+import { getSearchStationNm } from "../../api";
+import { Station } from "../type";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "../stores/store";
+import {
+  setSearchKeyword,
+  setSearchAllKeyword,
+  setSearchResults,
+} from "../features/SearchSlice";
 
 export interface SearchBarRef {
   handleSearch: (keyword: string) => void;
@@ -12,56 +19,64 @@ const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
   props,
   ref
 ) => {
-  const [keyword, setKeyword] = useState("");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-
-  const { data: searchStationList, isLoading } = useQuery(
-    ["searchResults"],
-    () => getSearchStationNm(keyword),
-    {
-      enabled: false,
-    }
+  const searchKeyword = useSelector(
+    (state: RootState) => state.search.searchKeyword
   );
+  const dispatch = useDispatch();
 
-  const saveKeywordToLocalStorage = (keyword: string) => {
-    const storedKeywords = localStorage.getItem("recentKeywords");
-    const recentKeywords: string[] = storedKeywords
-      ? JSON.parse(storedKeywords)
-      : [];
-    //중복 저장 방지
-    if (!recentKeywords.includes(keyword)) {
-      const updatedKeywords = [...recentKeywords, keyword];
-      localStorage.setItem("recentKeywords", JSON.stringify(updatedKeywords));
-    }
-  };
+  // const { data: searchStationList, isLoading } = useQuery(
+  //   ["searchResults"],
+  //   () => getSearchStationNm(keyword),
+  //   {
+  //     enabled: false,
+  //   }
+  // );
+
+  // const saveKeywordToLocalStorage = (keyword: string) => {
+  //   const storedKeywords = localStorage.getItem("recentKeywords");
+  //   const recentKeywords: string[] = storedKeywords
+  //     ? JSON.parse(storedKeywords)
+  //     : [];
+  //   //중복 저장 방지
+  //   if (!recentKeywords.includes(keyword)) {
+  //     const updatedKeywords = [...recentKeywords, keyword];
+  //     localStorage.setItem("recentKeywords", JSON.stringify(updatedKeywords));
+  //   }
+  // };
 
   const handleSearch = async (keyword: string) => {
+    dispatch(setSearchAllKeyword(keyword));
+
     await queryClient.prefetchQuery("searchStationList", () =>
       getSearchStationNm(keyword)
     );
 
     const latestSearchResults =
       queryClient.getQueryData<Station[]>("searchStationList");
+
+    if (latestSearchResults) {
+      dispatch(setSearchResults({ keyword, data: latestSearchResults }));
+    }
+
     navigate(`/search?keyword=${keyword}`, {
       state: { latestSearchResults },
     });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(event.target.value);
+    dispatch(setSearchKeyword(event.target.value));
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      saveKeywordToLocalStorage(keyword);
-      handleSearch(keyword);
+      handleSearch(searchKeyword);
     }
   };
 
   const handleSearchClick = () => {
-    saveKeywordToLocalStorage(keyword);
-    handleSearch(keyword);
+    handleSearch(searchKeyword);
   };
   //부모 컴포넌트에서 handleSearch()함수 호출
   useImperativeHandle(ref, () => ({
@@ -72,14 +87,14 @@ const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
   useEffect(() => {
     const prevKeyword = new URLSearchParams(location.search).get("keyword");
     if (prevKeyword !== null) {
-      setKeyword(prevKeyword);
+      dispatch(setSearchKeyword(prevKeyword));
     }
   }, [location.search]);
 
   return (
     <div className="p-2">
       <input
-        value={keyword}
+        value={searchKeyword}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="정류소명을 입력하세요."

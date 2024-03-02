@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { Station } from "../src/type";
+import { Station } from "../type";
 import SearchBar from "./SearchBar";
 
 interface SearchItemPros {
