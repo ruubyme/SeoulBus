@@ -15,6 +15,7 @@ export const getSearchStationNm = async (keyword: string) => {
         arsId,
       })
     );
+    console.log("gg");
     return searchStationList;
   } else {
     return undefined;

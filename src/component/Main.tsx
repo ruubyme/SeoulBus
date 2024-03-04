@@ -32,7 +32,7 @@ export const Main: React.FC = () => {
 
   return (
     <>
-      <SearchBar ref={searchBarRef} />
+      <SearchBar />
       <div className="pt-5 px-2">
         <h2 className="pb-2 text-blue-700">최근 검색어</h2>
         {recentKeywords.length === 0 ? (
