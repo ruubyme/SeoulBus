@@ -9,22 +9,29 @@ import SearchList from "./src/component/SearchList";
 import { BusStationPage } from "./src/component/BusStationPage";
 import { store } from "./src/stores/store";
 import { Provider } from "react-redux";
+import { rootReducer } from "./src/features/reducers";
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 
 const queryClient = new QueryClient();
+
+const persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/search" element={<SearchList />} />
-            <Route path="/busStation" element={<BusStationPage />} />
-          </Routes>
-        </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
-      </QueryClientProvider>
+      <PersistGate loading={null} persistor={persistor}>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/search" element={<SearchList />} />
+              <Route path="/busStation" element={<BusStationPage />} />
+            </Routes>
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+        </QueryClientProvider>
+      </PersistGate>
     </Provider>
   </React.StrictMode>
 );

@@ -10,7 +10,7 @@ import {
   setSearchAllKeyword,
   setSearchKeyword,
   setSearchResults,
-} from "../features/SearchSlice";
+} from "../features/searchSlice";
 
 interface SearchItemPros {
   station: Station;

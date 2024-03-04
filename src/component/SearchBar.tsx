@@ -6,7 +6,7 @@ import {
   setSearchKeyword,
   setSearchAllKeyword,
   setSearchResults,
-} from "../features/SearchSlice";
+} from "../features/searchSlice";
 
 export interface SearchBarRef {
   handleSearch: (keyword: string) => void;

@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BusStation, Station } from "../type";
+import storage from "redux-persist/lib/storage";
 
 interface SearchState {
   searchKeyword: string;
@@ -13,6 +14,13 @@ const initialState: SearchState = {
   searchResults: {},
 };
 
+export const searchPersistConfig = {
+  key: "root",
+  storage,
+  whitelist: ["searchKeyword", "searchAllKeyword", "searchResults"],
+  blacklist: ["error"],
+};
+
 const searchSlice = createSlice({
   name: "search",
   initialState,
@@ -22,7 +30,10 @@ const searchSlice = createSlice({
     },
     setSearchAllKeyword: (state, action: PayloadAction<string>) => {
       const newSearchKeyword: string = action.payload;
-      if (!state.searchAllKeyword.includes(newSearchKeyword)) {
+      if (
+        !state.searchAllKeyword.includes(newSearchKeyword) &&
+        newSearchKeyword !== ""
+      ) {
         state.searchAllKeyword.push(newSearchKeyword);
       }
     },
