@@ -19,6 +19,7 @@ export const searchPersistConfig = {
   storage,
   whitelist: ["searchKeyword", "searchAllKeyword", "searchResults"],
   blacklist: ["error"],
+  expire: 48 * 60 * 60 * 1000, //48시간
 };
 
 const searchSlice = createSlice({
