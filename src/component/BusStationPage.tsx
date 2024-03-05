@@ -8,15 +8,11 @@ import {
 import { Station } from "../type";
 import { BusArriveList } from "./BusArriveList";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../stores/store";
 
 export const BusStationPage: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
   const { state } = location;
   const { stId, stNm, arsId }: Station = state;
-
   const { data: busRouteList, isLoading: isLoadingBusRoute } = useQuery(
     ["busRouteList"],
     () => getAllBusRoutesForStation(arsId)
@@ -42,9 +38,6 @@ export const BusStationPage: React.FC = () => {
   const { data: busArriveList, isLoading: isLoadingBussArriveList } = useQuery(
     ["busArrive"],
     async () => {
-      if (!busStationSeqList || isLoadingBussArriveList) {
-        return;
-      }
       const busArrList = await Promise.all(
         busStationSeqList?.map(async (item) => {
           const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
