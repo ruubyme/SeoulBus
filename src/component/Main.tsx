@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import SearchBar, { SearchBarRef } from "./SearchBar";
+import { useNavigate } from "react-router-dom";
 
 export const Main: React.FC = () => {
   const searchBarRef = useRef<SearchBarRef>(null);
   const [recentKeywords, setRecentKeywords] = useState<string[]>([]);
+  const navigator = useNavigate();
 
   const getRecentKeywordsFromLocalStorage = () => {
     const recentKeywordsToLocal = localStorage.getItem("recentKeywords");
@@ -50,6 +52,13 @@ export const Main: React.FC = () => {
             </div>
           ))
         )}
+        <h2 className="pb-2 text-blue-700">자주 가는 정류장</h2>
+        <h2
+          className="pb-2 text-blue-700"
+          onClick={() => navigator(`/nearbyStation`)}
+        >
+          주변 정류장 확인
+        </h2>
       </div>
     </>
   );

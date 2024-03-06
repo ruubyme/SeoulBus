@@ -16,3 +16,8 @@ export interface BusStation extends Bus, Station {
   arrmsg1?: string;
   arrmsg2?: string;
 }
+
+export interface LatLong {
+  latitude: number;
+  longitude: number;
+}

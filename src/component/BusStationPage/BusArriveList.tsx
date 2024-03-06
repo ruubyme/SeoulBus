@@ -1,4 +1,4 @@
-import { BusStation } from "../type";
+import { BusStation } from "../../type";
 
 const busTypeArray: Record<string, string> = {
   "0": "공용버스",
@@ -16,13 +16,14 @@ const busTypeColor: Record<string, string> = {
   "2": "green",
   "3": "blue",
   "4": "green",
-  "5": "yello",
+  "5": "yellow",
   "6": "red",
   "9": "gray",
 };
 
 export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
   const getBusColor = (busRouteType: string) => {
+    console.log(busTypeColor[busRouteType]);
     return busTypeColor[busRouteType] || "gray";
   };
 

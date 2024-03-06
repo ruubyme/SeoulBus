@@ -1,11 +1,13 @@
 import axios from "axios";
 import { Bus, BusStation, Station } from "./src/type";
 
+const busAPI = axios.create({
+  baseURL: "http://localhost:3000",
+});
+
 /**정류장 이름 검색 */
 export const getSearchStationNm = async (keyword: string) => {
-  const response = await axios.get(
-    `http://localhost:3000/search?keyword=${keyword}`
-  );
+  const response = await busAPI.get(`/search?keyword=${keyword}`);
   const responseData: Station[] = response.data.msgBody.itemList;
   if (responseData) {
     const searchStationList: Station[] = responseData.map(
@@ -24,9 +26,7 @@ export const getSearchStationNm = async (keyword: string) => {
 
 /**해당 정류소 모든 노선 검색 */
 export const getAllBusRoutesForStation = async (arsId: string) => {
-  const response = await axios.get(
-    `http://localhost:3000/busRoutes?arsId=${arsId}`
-  );
+  const response = await busAPI.get(`/busRoutes?arsId=${arsId}`);
   const responseData: Bus[] = response.data.msgBody.itemList;
   const busRouteList: Bus[] = responseData.map(
     ({ busRouteNm, busRouteId, busRouteType }) => ({
@@ -40,9 +40,7 @@ export const getAllBusRoutesForStation = async (arsId: string) => {
 
 /**특정 버스의 정류소 순번 조회 */
 export const getStationOrd = async (busRouteId: string, arsId: string) => {
-  const response = await axios.get(
-    `http://localhost:3000/stationOrd?busRouteId=${busRouteId}`
-  );
+  const response = await busAPI.get(`/stationOrd?busRouteId=${busRouteId}`);
   const busStationRouteAll = response.data.msgBody.itemList;
   let seq = "";
   let nextStationNm = "";
@@ -68,8 +66,8 @@ export const getArrInfoByRouteList = async (
   stId: string,
   seq: string
 ) => {
-  const response = await axios.get(`
-    http://localhost:3000/busArriveInfo?busRouteId=${busRouteId}&stId=${stId}&seq=${seq}
+  const response =
+    await busAPI.get(`/busArriveInfo?busRouteId=${busRouteId}&stId=${stId}&seq=${seq}
   `);
   const responseData: { arrmsg1: string; arrmsg2: string }[] =
     response.data.msgBody.itemList;

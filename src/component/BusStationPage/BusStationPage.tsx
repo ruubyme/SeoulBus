@@ -4,8 +4,8 @@ import {
   getAllBusRoutesForStation,
   getArrInfoByRouteList,
   getStationOrd,
-} from "../../api";
-import { Station } from "../type";
+} from "../../../api";
+import { Station } from "../../type";
 import { BusArriveList } from "./BusArriveList";
 import { useEffect } from "react";
 
