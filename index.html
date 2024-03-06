@@ -9,5 +9,11 @@
   <body class="bg-gray-200">
     <div id="root"></div>
     <script type="module" src="App.tsx"></script>
+    <script>
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=%VITE_KAKAOMAP_APPKEY%&autoload=false`;
+      document.head.appendChild(script);
+    </script>
   </body>
 </html>

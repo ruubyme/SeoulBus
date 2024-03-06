@@ -1,6 +1,5 @@
 import { LatLong } from "../../type";
-import { useKakaoMapScript } from "./useKakaoMapScript";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 
 declare global {
   interface Window {
@@ -14,95 +13,59 @@ declare namespace kakao.maps {
   }
 }
 
-/**주소로 좌표 검색 함수 */
-const createGeocoder = async (address: string): Promise<LatLong> => {
-  return new Promise((resolve, reject) => {
-    window.kakao.maps.load(() => {
-      const geocoder = new window.kakao.maps.services.Geocoder(); //주소-좌표 반환 객체 생성
-
-      geocoder.addressSearch(address, (result: any, status: any) => {
-        if (status === window.kakao.maps.services.Status.OK) {
-          resolve({
-            latitude: result[0].y,
-            longitude: result[0].x,
-          });
-        } else {
-          reject(new Error("Geocoder: Address search failed"));
-        }
-      });
-    });
-  });
-};
-
-/**정적 지도 생성 */
-const createStaticMap = (longitude: number, latitude: number) => {
-  window.kakao.maps.load(() => {
-    const staticMapContainer: HTMLElement | null =
-      document.getElementById("staticMap");
-    //마커표시
-    const markerPosition = new window.kakao.maps.LatLng(longitude, latitude);
-    const marker = {
-      position: markerPosition,
-    };
-
-    if (staticMapContainer) {
-      const staticOption = {
-        center: new window.kakao.maps.LatLng(longitude, latitude),
-        level: 3,
-        marker: marker,
-      };
-      const staticMap = new window.kakao.maps.StaticMap(
-        staticMapContainer,
-        staticOption
-      );
-    }
-  });
-};
-
 const Map: React.FC = () => {
-  const mapRef = useRef<any>(null);
-  const isScriptLoaded = useKakaoMapScript();
-
-  /**map 생성 함수 */
-  const createMap = async (address: string) => {
-    const onLoadKakaoMap = async () => {
-      try {
-        let coords = { latitude: 37.517198, longitude: 126.891434 };
-        if (address) {
-          coords = await createGeocoder(address);
-        }
-        const kakaoCoords: kakao.maps.LatLng = new window.kakao.maps.LatLng(
-          coords.latitude,
-          coords.longitude
-        );
-        const container = document.getElementById("map");
-        const options = {
-          center: kakaoCoords,
-          level: 3,
-        };
-        const map = new window.kakao.maps.Map(container, options);
-        mapRef.current = map;
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    onLoadKakaoMap();
-  };
+  const [map, setMap] = useState<any>();
+  const [marker, setMarker] = useState<any>();
+  // const isScriptLoaded = useKakaoMapScript();
 
   useEffect(() => {
-    if (isScriptLoaded) {
-      createMap("문래로 8길 5");
-    }
-  });
+    window.kakao.maps.load(() => {
+      const container = document.getElementById("map");
+      const options = {
+        center: new window.kakao.maps.LatLng(33.450701, 126.570667),
+        level: 3,
+      };
+
+      setMap(new window.kakao.maps.Map(container, options));
+      setMarker(new window.kakao.maps.Marker());
+    });
+  }, []);
+
+  /**현재 위치 가져오기 */
+  const getCurrentPosBtn = () => {
+    navigator.geolocation.getCurrentPosition(
+      getPosSuccess,
+      () => alert("위치 정보를 가져오는데 실패했습니다."),
+      {
+        enableHighAccuracy: true,
+        maximumAge: 30000,
+        timeout: 27000,
+      }
+    );
+  };
+
+  /**현재 위치를 가져오는데 성공할 경우 실행 */
+  const getPosSuccess = (pos: GeolocationPosition) => {
+    var currentPos = new window.kakao.maps.LatLng(
+      pos.coords.latitude,
+      pos.coords.longitude
+    );
+
+    map.panTo(currentPos); //지도 이동
+
+    //현재위치에 마커생성
+    marker.setMap(null);
+    marker.setPosition(currentPos);
+    marker.setMap(map);
+  };
 
   return (
-    <>
-      <div>
-        <div className="relative w-full h-[80vh]">
-          <div id="map" className="w-full h-full" />
-        </div>
-      </div>
-    </>
+    <div className="w-full h-screen">
+      <div id="map" className="w-full h-1/3" />
+      <button className="bottom-4 right-4 rounded " onClick={getCurrentPosBtn}>
+        현재 위치
+      </button>
+    </div>
   );
 };
 
