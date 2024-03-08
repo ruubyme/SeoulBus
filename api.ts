@@ -17,7 +17,6 @@ export const getSearchStationNm = async (keyword: string) => {
         arsId,
       })
     );
-    console.log("gg");
     return searchStationList;
   } else {
     return undefined;
@@ -81,5 +80,34 @@ export const getArrInfoByRouteList = async (
       arrmsg: "서울 외 지역버스",
       arrmsg2: "서울 외 지역버스",
     };
+  }
+};
+
+/**좌표로 버스정류장 조회 */
+export const getSearchStationPos = async (
+  latitude: number,
+  longitude: number
+) => {
+  const response = await busAPI.get(
+    `/searchBusStationPos?latitude=${latitude}&longitude=${longitude}`
+  );
+  const responseData: {
+    arsId: string;
+    stationNm: string;
+    stationId: string;
+  }[] = response.data.msgBody.itemList;
+  if (responseData) {
+    if (responseData.length >= 2) {
+      throw new Error("특정 정류소 하나만 클릭해주세요.");
+    } else if (responseData.length === 1) {
+      const { arsId, stationNm, stationId } = responseData[0];
+      const searchStation: Station = {
+        arsId,
+        stId: stationId,
+        stNm: stationNm,
+      };
+
+      return searchStation;
+    }
   }
 };

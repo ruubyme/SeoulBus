@@ -1,16 +1,11 @@
-import { useLocation, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Station } from "../type";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
 import { useQuery } from "react-query";
 import { getSearchStationNm } from "../../api";
-import { useEffect } from "react";
-import {
-  setSearchAllKeyword,
-  setSearchKeyword,
-  setSearchResults,
-} from "../features/searchSlice";
+import { setSearchAllKeyword, setSearchResults } from "../features/searchSlice";
 
 interface SearchItemPros {
   station: Station;

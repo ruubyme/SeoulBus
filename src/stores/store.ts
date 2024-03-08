@@ -1,6 +1,4 @@
 import { configureStore } from "@reduxjs/toolkit";
-import busArriveInfoSlice from "../features/busArrivalInfoSlice";
-import searchSlice from "../features/searchSlice";
 
 import {
   FLUSH,
@@ -10,7 +8,6 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import { rootReducer } from "../features/reducers";
 
 export const store = configureStore({

@@ -83,3 +83,16 @@ app.get("/nextStations", async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+/**정류소 좌표로 조회 */
+app.get("/searchBusStationPos", async (req, res) => {
+  try {
+    const { latitude, longitude } = req.query;
+    const url = `http://ws.bus.go.kr/api/rest/stationinfo/getStationByPos?ServiceKey=${API_KEY}&tmX=${longitude}&tmY=${latitude}&radius=10&resultType=json`;
+    const response = await axios.get(url, cors());
+    res.json(response.data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error: searchBusStationPos");
+  }
+});

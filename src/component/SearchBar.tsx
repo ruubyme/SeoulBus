@@ -2,11 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../stores/store";
-import {
-  setSearchKeyword,
-  setSearchAllKeyword,
-  setSearchResults,
-} from "../features/searchSlice";
+import { setSearchKeyword } from "../features/searchSlice";
 
 export interface SearchBarRef {
   handleSearch: (keyword: string) => void;
