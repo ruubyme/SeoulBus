@@ -8,6 +8,7 @@ import {
 import { Station } from "../../type";
 import { BusArriveList } from "./BusArriveList";
 import { useEffect } from "react";
+import BookmarkButton from "../BookmarkButton";
 
 export const BusStationPage: React.FC = () => {
   const location = useLocation();
@@ -60,9 +61,10 @@ export const BusStationPage: React.FC = () => {
   return (
     <div>
       <div className="h-screen">
-        <div className="h-1/5 flex flex-col justify-center bg-gray-400">
-          <p className="text-center text-lg text-white">{arsId}</p>
-          <p className="text-center text-white text-xl">{stNm}</p>
+        <div className="h-1/4 flex flex-col items-center justify-center  bg-gray-400 pt-5 min-h-[150px]">
+          <p className="text-lg text-white">{arsId}</p>
+          <p className="text-white text-xl">{stNm}</p>
+          <BookmarkButton station={state} />
         </div>
         {isLoadingBusRoute ||
         isLoadingBusStationSeqList ||

@@ -1,9 +1,28 @@
 import axios from "axios";
 import { Bus, BusStation, Station } from "./src/type";
+import { parseCookies, setCookie } from "nookies";
 
-const busAPI = axios.create({
+export const busAPI = axios.create({
   baseURL: "http://localhost:3000",
 });
+
+export const getUUID = async () => {
+  const cookies = parseCookies();
+  const userUUID = cookies.userUUID;
+  if (!userUUID) {
+    try {
+      const response = await busAPI.get("/");
+      const responseData = response.data;
+
+      setCookie(null, "userUUID", responseData.uuid, {
+        maxAge: 900000,
+        path: "/",
+      });
+    } catch (error) {
+      console.error("Error uuid", error);
+    }
+  }
+};
 
 /**정류장 이름 검색 */
 export const getSearchStationNm = async (keyword: string) => {
@@ -108,6 +127,21 @@ export const getSearchStationPos = async (
       };
 
       return searchStation;
+    }
+  }
+};
+
+/**즐겨찾는 정류장 조회 */
+export const getBookmarks = async () => {
+  try {
+    const response = await busAPI.get("/bookmarks", {
+      withCredentials: true, // 브라우저의 쿠키를 요청에 포함시키려면 true로 설정
+    });
+    const responseData: Station[] = response.data;
+    return responseData;
+  } catch (error) {
+    if (error) {
+      console.error(error);
     }
   }
 };

@@ -23,7 +23,6 @@ const busTypeColor: Record<string, string> = {
 
 export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
   const getBusColor = (busRouteType: string) => {
-    console.log(busTypeColor[busRouteType]);
     return busTypeColor[busRouteType] || "gray";
   };
 

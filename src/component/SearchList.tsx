@@ -6,6 +6,7 @@ import { RootState } from "../stores/store";
 import { useQuery } from "react-query";
 import { getSearchStationNm } from "../../api";
 import { setSearchAllKeyword, setSearchResults } from "../features/searchSlice";
+import BookmarkButton from "./BookmarkButton";
 
 interface SearchItemPros {
   station: Station;
@@ -15,11 +16,12 @@ const SearchItem: React.FC<SearchItemPros> = ({ station }) => {
   const { stId, stNm, arsId } = station;
 
   return (
-    <div className="my-2 border-b border-gray-500 bg-gray-100">
+    <div className="my-2 border-b border-gray-500 bg-gray-100 flex justify-between">
       <Link to={{ pathname: "/busStation" }} state={{ stId, stNm, arsId }}>
         <p className="text-lg m-1">{stNm}</p>
         <p className="text-red-600 m-1">{arsId}</p>
       </Link>
+      <BookmarkButton station={station} />
     </div>
   );
 };
