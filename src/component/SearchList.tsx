@@ -13,11 +13,14 @@ interface SearchItemPros {
 }
 
 const SearchItem: React.FC<SearchItemPros> = ({ station }) => {
-  const { stId, stNm, arsId } = station;
+  const { stId, stNm, arsId, tmX, tmY } = station;
 
   return (
     <div className="my-2 border-b border-gray-500 bg-gray-100 flex justify-between">
-      <Link to={{ pathname: "/busStation" }} state={{ stId, stNm, arsId }}>
+      <Link
+        to={{ pathname: "/busStation" }}
+        state={{ stId, stNm, arsId, tmX, tmY }}
+      >
         <p className="text-lg m-1">{stNm}</p>
         <p className="text-red-600 m-1">{arsId}</p>
       </Link>
