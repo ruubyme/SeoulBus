@@ -30,10 +30,12 @@ export const getSearchStationNm = async (keyword: string) => {
   const responseData: Station[] = response.data.msgBody.itemList;
   if (responseData) {
     const searchStationList: Station[] = responseData.map(
-      ({ stId, stNm, arsId }) => ({
+      ({ stId, stNm, arsId, tmX, tmY }) => ({
         stId,
         stNm,
         arsId,
+        tmX,
+        tmY,
       })
     );
     return searchStationList;
