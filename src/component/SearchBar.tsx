@@ -1,38 +1,20 @@
-import { useState, useEffect, useImperativeHandle, forwardRef } from "react";
-import { useQuery, useQueryClient } from "react-query";
-import { getSearchStationNm } from "../../api";
-import { Station } from "../type";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../stores/store";
-import {
-  setSearchKeyword,
-  setSearchAllKeyword,
-  setSearchResults,
-} from "../features/SearchSlice";
+import { setSearchKeyword } from "../features/searchSlice";
 
 export interface SearchBarRef {
   handleSearch: (keyword: string) => void;
 }
 
-const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
-  props,
-  ref
-) => {
+const SearchBar: React.FC = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
   const dispatch = useDispatch();
-
-  // const { data: searchStationList, isLoading } = useQuery(
-  //   ["searchResults"],
-  //   () => getSearchStationNm(keyword),
-  //   {
-  //     enabled: false,
-  //   }
-  // );
+  const [inputValue, setInputValue] = useState("");
 
   // const saveKeywordToLocalStorage = (keyword: string) => {
   //   const storedKeywords = localStorage.getItem("recentKeywords");
@@ -46,55 +28,38 @@ const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
   //   }
   // };
 
-  const handleSearch = async (keyword: string) => {
-    dispatch(setSearchAllKeyword(keyword));
-
-    await queryClient.prefetchQuery("searchStationList", () =>
-      getSearchStationNm(keyword)
-    );
-
-    const latestSearchResults =
-      queryClient.getQueryData<Station[]>("searchStationList");
-
-    if (latestSearchResults) {
-      dispatch(setSearchResults({ keyword, data: latestSearchResults }));
-    }
-
-    navigate(`/search?keyword=${keyword}`, {
-      state: { latestSearchResults },
-    });
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setSearchKeyword(event.target.value));
+  const handleSearch = async (keyword: string) => {
+    dispatch(setSearchKeyword(keyword));
+    navigate(`/search?keyword=${keyword}`);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      handleSearch(searchKeyword);
+      handleSearch(inputValue);
     }
   };
 
   const handleSearchClick = () => {
-    handleSearch(searchKeyword);
+    handleSearch(inputValue);
   };
-  //부모 컴포넌트에서 handleSearch()함수 호출
-  useImperativeHandle(ref, () => ({
-    handleSearch,
-  }));
 
   //페이지 이동 시 해당 페이지의 검색어를 input에 반영
   useEffect(() => {
     const prevKeyword = new URLSearchParams(location.search).get("keyword");
-    if (prevKeyword !== null) {
+    if (prevKeyword !== null && prevKeyword !== searchKeyword) {
       dispatch(setSearchKeyword(prevKeyword));
+      setInputValue(prevKeyword);
     }
   }, [location.search]);
 
   return (
     <div className="p-2">
       <input
-        value={searchKeyword}
+        value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         placeholder="정류소명을 입력하세요."
@@ -106,4 +71,4 @@ const SearchBar: React.ForwardRefRenderFunction<SearchBarRef, {}> = (
   );
 };
 
-export default forwardRef(SearchBar);
+export default SearchBar;
