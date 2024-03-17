@@ -2,10 +2,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BusStation, Station } from "../type";
 import storage from "redux-persist/lib/storage";
 
+interface SearchResult {
+  data: Station[];
+  timestamp: number;
+}
+
 interface SearchState {
   searchKeyword: string;
   searchAllKeyword: string[];
-  searchResults: Record<string, Station[]>;
+  searchResults: Record<string, SearchResult>;
 }
 
 const initialState: SearchState = {
@@ -44,11 +49,23 @@ const searchSlice = createSlice({
       action: PayloadAction<{ keyword: string; data: Station[] }>
     ) => {
       const { keyword, data } = action.payload;
-      state.searchResults[keyword] = data;
+      const timestamp = Date.now();
+      state.searchResults[keyword] = { data, timestamp };
+    },
+
+    removeSearchResults: (state, action: PayloadAction<string>) => {
+      const keyword = action.payload;
+      const newSearchResults = { ...state.searchResults };
+      delete newSearchResults[keyword];
+      state.searchResults = { ...newSearchResults };
     },
   },
 });
 
-export const { setSearchKeyword, setSearchAllKeyword, setSearchResults } =
-  searchSlice.actions;
+export const {
+  setSearchKeyword,
+  setSearchAllKeyword,
+  setSearchResults,
+  removeSearchResults,
+} = searchSlice.actions;
 export default searchSlice.reducer;
