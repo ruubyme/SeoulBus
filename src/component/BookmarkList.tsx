@@ -1,33 +1,23 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  getAllBusRoutesForStation,
-  getBookmarks,
-  getStationOrd,
-} from "../../api";
+import { getBookmarks } from "../../api";
 import { setBookmarks } from "../features/userSlice";
 import { RootState } from "../stores/store";
-import { BusStation, Station } from "../type";
-import { useState } from "react";
+import { Station } from "../type";
 import { BusStationInfo } from "./BusStationPage/BusArriveList";
-
-const BookmarkItem: React.FC<{ station: Station }> = ({ station }) => {
-  return (
-    <div>
-      <p>{station.stNm}</p>
-    </div>
-  );
-};
 
 const BookmarkList: React.FC = () => {
   const dispatch = useDispatch();
 
   const bookmarkList = useSelector((state: RootState) => state.user.bookmarks);
 
-  const { data: bookmarks } = useQuery(["bookmarks"], async () => {
-    const result = await getBookmarks();
-    dispatch(setBookmarks(result));
-    return result;
+  const { data: bookmarks } = useQuery({
+    queryKey: ["bookmarks"],
+    queryFn: async () => {
+      const result = await getBookmarks();
+      dispatch(setBookmarks(result));
+      return result;
+    },
   });
 
   return (
