@@ -98,7 +98,7 @@ export const getArrInfoByRouteList = async (
     };
   } else {
     return {
-      arrmsg: "서울 외 지역버스",
+      arrmsg1: "서울 외 지역버스",
       arrmsg2: "서울 외 지역버스",
     };
   }
@@ -130,6 +130,8 @@ export const getSearchStationPos = async (
 
       return searchStation;
     }
+  } else {
+    return null;
   }
 };
 

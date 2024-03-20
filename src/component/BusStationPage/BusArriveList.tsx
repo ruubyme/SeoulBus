@@ -1,5 +1,5 @@
-import { BusStation, Station } from "../../type";
-import { useQuery } from "react-query";
+import { Bus, BusStation, Station } from "../../type";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import {
   getAllBusRoutesForStation,
   getArrInfoByRouteList,
@@ -20,12 +20,12 @@ const busTypeArray: Record<string, string> = {
   "9": "폐지버스",
 };
 const busTypeColor: Record<string, string> = {
-  "2": "green",
-  "3": "blue",
-  "4": "green",
-  "5": "yellow",
-  "6": "red",
-  "9": "gray",
+  "2": "text-green-500",
+  "3": "text-blue-500",
+  "4": "text-green-500",
+  "5": "text-yellow-500",
+  "6": "text-red-500",
+  "9": "text-gray-500",
 };
 
 export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
@@ -36,7 +36,7 @@ export const BusArriveItem: React.FC<{ bus: BusStation }> = ({ bus }) => {
   return (
     <li className="flex pl-2 py-2 border-b">
       <div className="w-60">
-        <p className={`text-lg text-${getBusColor(bus.busRouteType)}-500`}>
+        <p className={`text-lg ${getBusColor(bus.busRouteType)}`}>
           {bus.busRouteNm}
         </p>
         <p className="text-sm text-gray-500">{bus.nextStationNm || "종점"}</p>
@@ -89,51 +89,59 @@ export const BusStationInfo: React.FC<{
 }> = ({ station, busTypeNm }) => {
   const { stId, stNm, arsId } = station;
 
-  const { data: busRouteList, isLoading: isLoadingBusRoute } = useQuery(
-    ["busRouteList"],
-    () => getAllBusRoutesForStation(arsId)
-  );
-  const { data: busStationSeqList, isLoading: isLoadingBusStationSeqList } =
-    useQuery(
-      ["busStationSeqList", busRouteList],
-      async () => {
-        const busStationList = await Promise.all(
-          busRouteList?.map(async (item) => {
-            const { seq, nextStationNm } = await getStationOrd(
-              item.busRouteId,
-              arsId
-            );
-            return { ...item, seq, stId, nextStationNm, stNm, arsId };
-          }) || []
-        );
-        return busStationList;
-      },
-      { enabled: !!busRouteList }
-    );
+  const { data: busRouteList, isLoading: isLoadingBusRoute } = useQuery({
+    queryKey: ["busRouteList", arsId],
+    queryFn: () => getAllBusRoutesForStation(arsId),
+  });
 
-  const { data: busArriveList, isLoading: isLoadingBussArriveList } = useQuery(
-    ["busArrive"],
-    async () => {
-      const busArrList = await Promise.all(
-        busStationSeqList?.map(async (item) => {
-          const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+  const busStationSeqListQueries = useQueries({
+    queries:
+      busRouteList?.map((item) => ({
+        queryKey: ["busStationSeqList", item.busRouteId],
+        queryFn: async () => {
+          const { seq, nextStationNm } = await getStationOrd(
             item.busRouteId,
-            item.stId,
-            item.seq
+            arsId
           );
-          return { ...item, arrmsg1, arrmsg2 };
-        }) || []
-      );
-      return busArrList;
-    },
-    { enabled: !!busStationSeqList }
-  );
+          return { ...item, seq, stId, nextStationNm, stNm, arsId };
+        },
+        enabled: !!busRouteList,
+        refetchInterval: 60000,
+      })) ?? [],
+  });
+
+  const busStationSeqDataList = busStationSeqListQueries.map((result) => {
+    return result.data;
+  });
+
+  const busStationSeqList = busStationSeqDataList.filter(
+    (item) => item !== undefined
+  ) as BusStation[];
+
+  const busArriveListQueries = useQueries({
+    queries: busStationSeqList?.map((item) => ({
+      queryKey: ["busArriveList", item.busRouteId],
+      queryFn: async () => {
+        const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+          item.busRouteId,
+          item.stId,
+          item.seq
+        );
+        return { ...item, arrmsg1, arrmsg2 };
+      },
+      enabled: !!busStationSeqList,
+      refetchInterval: 60000,
+    })),
+  });
+
+  const busArriveDataList = busArriveListQueries.map((result) => result.data);
+  const busArriveList = busArriveDataList.filter(
+    (item) => item !== undefined
+  ) as BusStation[];
 
   return (
     <>
-      {isLoadingBusRoute ||
-      isLoadingBusStationSeqList ||
-      isLoadingBussArriveList ? (
+      {isLoadingBusRoute ? (
         <div className="flex justify-center items-center py-10">
           <div className="animate-spin w-10 h-10 rounded-full border-t-2 border-blue-500"></div>
         </div>

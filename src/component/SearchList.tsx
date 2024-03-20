@@ -3,9 +3,13 @@ import { Station } from "../type";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getSearchStationNm } from "../../api";
-import { setSearchAllKeyword, setSearchResults } from "../features/searchSlice";
+import {
+  removeSearchResults,
+  setSearchAllKeyword,
+  setSearchResults,
+} from "../features/searchSlice";
 import BookmarkButton from "./BookmarkButton";
 
 interface SearchItemPros {
@@ -42,9 +46,9 @@ const SearchList: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  const { data: searchStationList, isLoading } = useQuery(
-    ["searchResults", searchKeyword],
-    async () => {
+  const { data: searchStationList, isLoading } = useQuery({
+    queryKey: ["searchResults", searchKeyword],
+    queryFn: async () => {
       //처음 검색한 keyword 일 때만 호출
       if (!searchAllKeyword.includes(searchKeyword)) {
         dispatch(setSearchAllKeyword(searchKeyword));
@@ -53,13 +57,25 @@ const SearchList: React.FC = () => {
           dispatch(setSearchResults({ keyword: searchKeyword, data: result }));
           return result;
         }
+      } else {
+        const searchData = searchResults[searchKeyword];
+        const currentTime = Date.now();
+
+        //일주일이 지났는지 확인
+        if (currentTime - searchData.timestamp > 604800000) {
+          dispatch(removeSearchResults(searchKeyword));
+          const result = await getSearchStationNm(searchKeyword);
+          if (result) {
+            dispatch(
+              setSearchResults({ keyword: searchKeyword, data: result })
+            );
+            return result;
+          }
+        }
       }
+      return {};
     },
-    {
-      cacheTime: 60000,
-      staleTime: 50000,
-    }
-  );
+  });
 
   return (
     <>
@@ -70,7 +86,7 @@ const SearchList: React.FC = () => {
             <div className="animate-spin w-10 h-10 rounded-full border-t-2 border-blue-500"></div>
           </div>
         ) : searchResults[searchKeyword] ? (
-          searchResults[searchKeyword].map((item: Station) => {
+          searchResults[searchKeyword].data.map((item: Station) => {
             return <SearchItem key={item.stId} station={item} />;
           })
         ) : (

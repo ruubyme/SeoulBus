@@ -16,25 +16,17 @@ const SearchBar: React.FC = () => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState("");
 
-  // const saveKeywordToLocalStorage = (keyword: string) => {
-  //   const storedKeywords = localStorage.getItem("recentKeywords");
-  //   const recentKeywords: string[] = storedKeywords
-  //     ? JSON.parse(storedKeywords)
-  //     : [];
-  //   //중복 저장 방지
-  //   if (!recentKeywords.includes(keyword)) {
-  //     const updatedKeywords = [...recentKeywords, keyword];
-  //     localStorage.setItem("recentKeywords", JSON.stringify(updatedKeywords));
-  //   }
-  // };
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
   const handleSearch = async (keyword: string) => {
-    dispatch(setSearchKeyword(keyword));
-    navigate(`/search?keyword=${keyword}`);
+    if (!keyword) {
+      alert("검색어를 입력해주세요.");
+    } else {
+      dispatch(setSearchKeyword(keyword));
+      navigate(`/search?keyword=${keyword}`);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

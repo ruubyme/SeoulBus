@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { getSearchStationPos } from "../../../api";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import StationItem from "./StationItem";
 
 const NearbyStationPage: React.FC = () => {
@@ -19,21 +19,20 @@ const NearbyStationPage: React.FC = () => {
   }>();
 
   /**정류소 marker 클릭 */
-  const { data: station, error } = useQuery(
-    ["station", clickPos],
-    async () => {
+  const {
+    data: station,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["station", clickPos],
+    queryFn: async () => {
       if (clickPos) {
         const result = await getSearchStationPos(clickPos.lat, clickPos.lng);
-        console.log(result);
         return result;
       }
     },
-    {
-      onError: (error: Error) => {
-        alert(error.message);
-      },
-    }
-  );
+    enabled: !!clickPos,
+  });
 
   /**현재 위치 받아오기 */
   const getCurrentPos = () => {
@@ -63,6 +62,12 @@ const NearbyStationPage: React.FC = () => {
   useEffect(() => {
     getCurrentPos();
   }, []);
+
+  useEffect(() => {
+    if (isError) {
+      alert(error.message);
+    }
+  });
 
   return (
     <div className="h-screen flex flex-col">
