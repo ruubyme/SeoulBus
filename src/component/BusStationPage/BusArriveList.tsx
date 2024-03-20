@@ -106,6 +106,7 @@ export const BusStationInfo: React.FC<{
           return { ...item, seq, stId, nextStationNm, stNm, arsId };
         },
         enabled: !!busRouteList,
+        refetchInterval: 60000,
       })) ?? [],
   });
 
@@ -129,6 +130,7 @@ export const BusStationInfo: React.FC<{
         return { ...item, arrmsg1, arrmsg2 };
       },
       enabled: !!busStationSeqList,
+      refetchInterval: 60000,
     })),
   });
 
@@ -137,87 +139,9 @@ export const BusStationInfo: React.FC<{
     (item) => item !== undefined
   ) as BusStation[];
 
-  // const busStationSeqListQueriesResults = useQueries(busStationSeqListQueries);
-  // const busStationSeqList = busStationSeqListQueriesResults
-  //   .filter((result) => result.data !== undefined)
-  //   .map((result) => {
-  //     console.log("busStationSeqList", result.data);
-  //     return result.data;
-  //   });
-
-  // const busArriveListQueries = busStationSeqList.map<UseQueryOptions<BusStation[]>>((item) => {
-  //   return {
-  //     queryKey: ["busArriveList", item],
-  //     queryFn: async () => {
-  //       if (item) {
-  //         const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
-  //           item.busRouteId,
-  //           item.stId,
-  //           item.seq
-  //         );
-  //         return { ...item, arrmsg1, arrmsg2 };
-  //       } else {
-  //         return {}
-  //       }
-  //     },
-  //     enabled: !!busStationSeqList,
-  //   };
-  // });
-  // const busArriveListQueriesResults = useQueries(busArriveListQueries);
-  // const busArriveList = busArriveListQueriesResults
-  // .filter((result) => result !== undefined)
-  // .map((result) => {
-  //   console.log("busArrList:", result.data);
-  //   return result.data;
-  // });
-  // const busArriveListQueriesResults = useQueries(busArriveListQueries);
-  // const busArriveList = busArriveListQueriesResults.map(
-  //   (result) => result.data
-  // );
-
-  //promise 사용---------------------------
-  // const { data: busStationSeqList, isLoading: isLoadingBusStationSeqList } =
-  //   useQuery(
-  //     ["busStationSeqList", busRouteList],
-  //     async () => {
-  //       const busStationList = await Promise.all(
-  //         busRouteList?.map(async (item) => {
-  //           const { seq, nextStationNm } = await getStationOrd(
-  //             item.busRouteId,
-  //             arsId
-  //           );
-  //           return { ...item, seq, stId, nextStationNm, stNm, arsId };
-  //         }) || []
-  //       );
-  //       return busStationList;
-  //     },
-  //     { enabled: !!busRouteList }
-  //   );
-  // console.log(busStationSeqList);
-  // const { data: busArriveList, isLoading: isLoadingBussArriveList } = useQuery(
-  //   ["busArrive"],
-  //   async () => {
-  //     const busArrList = await Promise.all(
-  //       busStationSeqList?.map(async (item) => {
-  //         const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
-  //           item.busRouteId,
-  //           item.stId,
-  //           item.seq
-  //         );
-  //         return { ...item, arrmsg1, arrmsg2 };
-  //       }) || []
-  //     );
-  //     return busArrList;
-  //   },
-  //   { enabled: !!busStationSeqList }
-  // );
-
   return (
     <>
       {isLoadingBusRoute ? (
-        // ||
-        // isLoadingBusStationSeqList ||
-        // isLoadingBussArriveList
         <div className="flex justify-center items-center py-10">
           <div className="animate-spin w-10 h-10 rounded-full border-t-2 border-blue-500"></div>
         </div>

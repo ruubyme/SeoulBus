@@ -16,14 +16,17 @@ const SearchBar: React.FC = () => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState("");
 
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
 
   const handleSearch = async (keyword: string) => {
-    dispatch(setSearchKeyword(keyword));
-    navigate(`/search?keyword=${keyword}`);
+    if (!keyword) {
+      alert("검색어를 입력해주세요.");
+    } else {
+      dispatch(setSearchKeyword(keyword));
+      navigate(`/search?keyword=${keyword}`);
+    }
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
