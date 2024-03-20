@@ -11,6 +11,7 @@ import {
   setSearchResults,
 } from "../features/searchSlice";
 import BookmarkButton from "./BookmarkButton";
+import { useEffect } from "react";
 
 interface SearchItemPros {
   station: Station;
@@ -45,6 +46,10 @@ const SearchList: React.FC = () => {
     (state: RootState) => state.search.searchResults
   );
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log("SearchList");
+  }, []);
 
   const { data: searchStationList, isLoading } = useQuery({
     queryKey: ["searchResults", searchKeyword],
