@@ -49,7 +49,7 @@ const SearchList: React.FC = () => {
 
   useEffect(() => {
     console.log("SearchList");
-  }, []);
+  }, [searchKeyword]);
 
   const { data: searchStationList, isLoading } = useQuery({
     queryKey: ["searchResults", searchKeyword],
