@@ -11,7 +11,20 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ keyword, setSearchKeyword }) => {
   const navigate = useNavigate();
+<<<<<<< HEAD
   const [inputvalue, setInputValue] = useState("");
+=======
+  const searchKeyword = useSelector(
+    (state: RootState) => state.search.searchKeyword
+  );
+  const dispatch = useDispatch();
+  const [inputValue, setInputValue] = useState("");
+
+  useEffect(() => {
+    console.log("searchBar");
+  }, []);
+
+>>>>>>> develop
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };
