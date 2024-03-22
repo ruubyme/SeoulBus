@@ -5,7 +5,6 @@ import { parseCookies, setCookie } from "nookies";
 import { getUUID } from "../../api";
 import BookmarkList from "./BookmarkList";
 import busImage from "../assets/images/busImage.png";
-import SearchList from "./SearchList";
 
 export const Main: React.FC = () => {
   const navigator = useNavigate();
@@ -13,15 +12,9 @@ export const Main: React.FC = () => {
     getUUID();
   }, []);
 
-  const [searchKeyword, setSearchKeyword] = useState("");
-
   return (
     <>
-      <SearchBar keyword={searchKeyword} setSearchKeyword={setSearchKeyword} />
-      <SearchList
-        keyword={searchKeyword}
-        setSearchKeyword2={setSearchKeyword}
-      />
+      <SearchBar />
       <div className="pt-5 px-2">
         <div className="pb-2 bg-white p-2 flex cursor-pointer">
           <img src={busImage} width="30px" alt="busImage" className="" />

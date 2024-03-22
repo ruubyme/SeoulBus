@@ -13,10 +13,6 @@ const BookmarkButton: React.FC<{ station: Station }> = ({ station }) => {
   );
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log("props drilling, BookmarkButton 렌더링");
-  });
-
   /**북마크 추가 */
   const fetchAddBookmark = async () => {
     try {
