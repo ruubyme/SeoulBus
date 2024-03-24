@@ -44,16 +44,12 @@ const SearchBar: React.FC = () => {
     }
   }, [location.search]);
 
-  useEffect(() => {
-    console.log("props drilling, SearchBar 렌더링"); // 렌더링 횟수 확인
-  }, []);
-
   return (
     <div className="p-2">
       <input
         value={inputValue}
         onChange={handleChange}
-        // onKeyDown={handleKeyDown}
+        onKeyDown={handleKeyDown}
         placeholder="정류소명을 입력하세요."
       ></input>
       <button onClick={handleSearchClick} className="px-2">

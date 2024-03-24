@@ -19,20 +19,20 @@ const persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <QueryClientProvider client={queryClient}>
-    <React.StrictMode>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Main />} />
-              <Route path="/search" element={<SearchList />} />
-              <Route path="/busStation" element={<BusStationPage />} />
-              <Route path="/nearbyStation" element={<NearbyStationPage />} />
-            </Routes>
-            {/* <ReactQueryDevtools initialIsOpen={true} /> */}
-          </BrowserRouter>
-        </PersistGate>
-      </Provider>
-    </React.StrictMode>
+    {/* <React.StrictMode> */}
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/search" element={<SearchList />} />
+            <Route path="/busStation" element={<BusStationPage />} />
+            <Route path="/nearbyStation" element={<NearbyStationPage />} />
+          </Routes>
+          {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
+    {/* </React.StrictMode> */}
   </QueryClientProvider>
 );
