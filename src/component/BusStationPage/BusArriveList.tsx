@@ -96,6 +96,7 @@ export const BusStationInfo: React.FC<{
   });
 
   //test code
+
   const { data: busSeqList1 } = useQuery({
     queryKey: ["busSeqList1"],
     queryFn: async () => {
@@ -193,7 +194,7 @@ export const BusStationInfo: React.FC<{
         return { ...busSeqList3, arrmsg1, arrmsg2 };
       }
     },
-    enabled: !!busSeqList2,
+    enabled: !!busSeqList3,
   });
 
   const { data: busArrList4 } = useQuery({
@@ -208,7 +209,7 @@ export const BusStationInfo: React.FC<{
         return { ...busSeqList4, arrmsg1, arrmsg2 };
       }
     },
-    enabled: !!busSeqList3,
+    enabled: !!busSeqList4,
   });
 
   const { data: busArrList5 } = useQuery({
@@ -223,7 +224,7 @@ export const BusStationInfo: React.FC<{
         return { ...busSeqList5, arrmsg1, arrmsg2 };
       }
     },
-    enabled: !!busSeqList4,
+    enabled: !!busSeqList5,
   });
 
   // const busStationSeqListQueries = useQueries({
