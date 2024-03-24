@@ -2,7 +2,7 @@ import { Station } from "../type";
 import StarIconImage from "../../src/assets/images/starIcon.png";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { busAPI } from "../../api";
 import { addBookmark, removeBookmark } from "../features/userSlice";
 
@@ -12,6 +12,7 @@ const BookmarkButton: React.FC<{ station: Station }> = ({ station }) => {
     bookmarks.some((bookmark) => bookmark.stId === station.stId)
   );
   const dispatch = useDispatch();
+
   /**북마크 추가 */
   const fetchAddBookmark = async () => {
     try {

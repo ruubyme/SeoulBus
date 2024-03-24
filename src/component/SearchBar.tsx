@@ -4,10 +4,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../stores/store";
 import { setSearchKeyword } from "../features/searchSlice";
 
-export interface SearchBarRef {
-  handleSearch: (keyword: string) => void;
-}
-
 const SearchBar: React.FC = () => {
   const navigate = useNavigate();
   const searchKeyword = useSelector(

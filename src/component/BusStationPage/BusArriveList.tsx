@@ -6,6 +6,7 @@ import {
   getStationOrd,
 } from "../../../api";
 import BookmarkButton from "../BookmarkButton";
+import { useEffect, useState } from "react";
 
 const busTypeArray: Record<string, string> = {
   "0": "공용버스",
@@ -94,50 +95,181 @@ export const BusStationInfo: React.FC<{
     queryFn: () => getAllBusRoutesForStation(arsId),
   });
 
-  const busStationSeqListQueries = useQueries({
-    queries:
-      busRouteList?.map((item) => ({
-        queryKey: ["busStationSeqList", item.busRouteId],
-        queryFn: async () => {
-          const { seq, nextStationNm } = await getStationOrd(
-            item.busRouteId,
-            arsId
-          );
-          return { ...item, seq, stId, nextStationNm, stNm, arsId };
-        },
-        enabled: !!busRouteList,
-        refetchInterval: 60000,
-      })) ?? [],
+  //test code
+  const { data: busSeqList1 } = useQuery({
+    queryKey: ["busSeqList1"],
+    queryFn: async () => {
+      const { seq, nextStationNm } = await getStationOrd("118900006", arsId);
+      if (busRouteList && busRouteList[0]) {
+        return { ...busRouteList[0], seq, stId, nextStationNm, stNm, arsId };
+      }
+    },
+    enabled: !!busRouteList,
   });
 
-  const busStationSeqDataList = busStationSeqListQueries.map((result) => {
-    return result.data;
+  const { data: busSeqList2 } = useQuery({
+    queryKey: ["busSeqList2"],
+    queryFn: async () => {
+      const { seq, nextStationNm } = await getStationOrd("100100094", arsId);
+      if (busRouteList && busRouteList[1]) {
+        return { ...busRouteList[1], seq, stId, nextStationNm, stNm, arsId };
+      }
+    },
+    enabled: !!busRouteList,
   });
 
-  const busStationSeqList = busStationSeqDataList.filter(
-    (item) => item !== undefined
-  ) as BusStation[];
+  const { data: busSeqList3 } = useQuery({
+    queryKey: ["busSeqList3"],
+    queryFn: async () => {
+      const { seq, nextStationNm } = await getStationOrd("100100303", arsId);
+      if (busRouteList && busRouteList[2]) {
+        return { ...busRouteList[2], seq, stId, nextStationNm, stNm, arsId };
+      }
+    },
+    enabled: !!busRouteList,
+  });
 
-  const busArriveListQueries = useQueries({
-    queries: busStationSeqList?.map((item) => ({
-      queryKey: ["busArriveList", item.busRouteId],
-      queryFn: async () => {
+  const { data: busSeqList4 } = useQuery({
+    queryKey: ["busSeqList4"],
+    queryFn: async () => {
+      const { seq, nextStationNm } = await getStationOrd("219000008", arsId);
+      if (busRouteList && busRouteList[3]) {
+        return { ...busRouteList[3], seq, stId, nextStationNm, stNm, arsId };
+      }
+    },
+    enabled: !!busRouteList,
+  });
+
+  const { data: busSeqList5 } = useQuery({
+    queryKey: ["busSeqList5"],
+    queryFn: async () => {
+      const { seq, nextStationNm } = await getStationOrd("218000001", arsId);
+      if (busRouteList && busRouteList[4]) {
+        return { ...busRouteList[4], seq, stId, nextStationNm, stNm, arsId };
+      }
+    },
+    enabled: !!busRouteList,
+  });
+
+  const { data: busArrList1 } = useQuery({
+    queryKey: ["busArrList1"],
+    queryFn: async () => {
+      if (busSeqList1) {
         const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
-          item.busRouteId,
-          item.stId,
-          item.seq
+          busSeqList1?.busRouteId,
+          busSeqList1?.stId,
+          busSeqList1?.seq
         );
-        return { ...item, arrmsg1, arrmsg2 };
-      },
-      enabled: !!busStationSeqList,
-      refetchInterval: 60000,
-    })),
+        return { ...busSeqList1, arrmsg1, arrmsg2 };
+      }
+    },
+    enabled: !!busSeqList1,
   });
 
-  const busArriveDataList = busArriveListQueries.map((result) => result.data);
-  const busArriveList = busArriveDataList.filter(
-    (item) => item !== undefined
-  ) as BusStation[];
+  const { data: busArrList2 } = useQuery({
+    queryKey: ["busArrList2"],
+    queryFn: async () => {
+      if (busSeqList2) {
+        const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+          busSeqList2?.busRouteId,
+          busSeqList2?.stId,
+          busSeqList2?.seq
+        );
+        return { ...busSeqList2, arrmsg1, arrmsg2 };
+      }
+    },
+    enabled: !!busSeqList2,
+  });
+
+  const { data: busArrList3 } = useQuery({
+    queryKey: ["busArrList3"],
+    queryFn: async () => {
+      if (busSeqList3) {
+        const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+          busSeqList3?.busRouteId,
+          busSeqList3?.stId,
+          busSeqList3?.seq
+        );
+        return { ...busSeqList3, arrmsg1, arrmsg2 };
+      }
+    },
+    enabled: !!busSeqList2,
+  });
+
+  const { data: busArrList4 } = useQuery({
+    queryKey: ["busArrList4"],
+    queryFn: async () => {
+      if (busSeqList4) {
+        const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+          busSeqList4?.busRouteId,
+          busSeqList4?.stId,
+          busSeqList4?.seq
+        );
+        return { ...busSeqList4, arrmsg1, arrmsg2 };
+      }
+    },
+    enabled: !!busSeqList3,
+  });
+
+  const { data: busArrList5 } = useQuery({
+    queryKey: ["busArrList5"],
+    queryFn: async () => {
+      if (busSeqList5) {
+        const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+          busSeqList5?.busRouteId,
+          busSeqList5?.stId,
+          busSeqList5?.seq
+        );
+        return { ...busSeqList5, arrmsg1, arrmsg2 };
+      }
+    },
+    enabled: !!busSeqList4,
+  });
+
+  // const busStationSeqListQueries = useQueries({
+  //   queries:
+  //     busRouteList?.map((item) => ({
+  //       queryKey: ["busStationSeqList", item.busRouteId],
+  //       queryFn: async () => {
+  //         const { seq, nextStationNm } = await getStationOrd(
+  //           item.busRouteId,
+  //           arsId
+  //         );
+  //         return { ...item, seq, stId, nextStationNm, stNm, arsId };
+  //       },
+  //       enabled: !!busRouteList,
+  //       refetchInterval: 60000,
+  //     })) ?? [],
+  // });
+
+  // const busStationSeqDataList = busStationSeqListQueries.map((result) => {
+  //   return result.data;
+  // });
+
+  // const busStationSeqList = busStationSeqDataList.filter(
+  //   (item) => item !== undefined
+  // ) as BusStation[];
+
+  // const busArriveListQueries = useQueries({
+  //   queries: busStationSeqList?.map((item) => ({
+  //     queryKey: ["busArriveList", item.busRouteId],
+  //     queryFn: async () => {
+  //       const { arrmsg1, arrmsg2 } = await getArrInfoByRouteList(
+  //         item.busRouteId,
+  //         item.stId,
+  //         item.seq
+  //       );
+  //       return { ...item, arrmsg1, arrmsg2 };
+  //     },
+  //     enabled: !!busStationSeqList,
+  //     refetchInterval: 60000,
+  //   })),
+  // });
+
+  // const busArriveDataList = busArriveListQueries.map((result) => result.data);
+  // const busArriveList = busArriveDataList.filter(
+  //   (item) => item !== undefined
+  // ) as BusStation[];
 
   return (
     <>
@@ -146,7 +278,8 @@ export const BusStationInfo: React.FC<{
           <div className="animate-spin w-10 h-10 rounded-full border-t-2 border-blue-500"></div>
         </div>
       ) : (
-        <BusArriveList busArriveList={busArriveList} busTypeNm={busTypeNm} />
+        <></>
+        // <BusArriveList busArriveList={busArrList} busTypeNm={busTypeNm} />
       )}
     </>
   );

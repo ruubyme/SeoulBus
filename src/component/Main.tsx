@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import SearchBar, { SearchBarRef } from "./SearchBar";
+import SearchBar from "./SearchBar";
 import { useNavigate } from "react-router-dom";
 import { parseCookies, setCookie } from "nookies";
 import { getUUID } from "../../api";

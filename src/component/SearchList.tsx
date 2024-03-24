@@ -8,9 +8,11 @@ import { getSearchStationNm } from "../../api";
 import {
   removeSearchResults,
   setSearchAllKeyword,
+  setSearchKeyword,
   setSearchResults,
 } from "../features/searchSlice";
 import BookmarkButton from "./BookmarkButton";
+import { useEffect, useState } from "react";
 
 interface SearchItemPros {
   station: Station;
@@ -37,7 +39,6 @@ const SearchList: React.FC = () => {
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
-
   const searchAllKeyword = useSelector(
     (state: RootState) => state.search.searchAllKeyword
   );
@@ -46,36 +47,56 @@ const SearchList: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  const { data: searchStationList, isLoading } = useQuery({
-    queryKey: ["searchResults", searchKeyword],
-    queryFn: async () => {
-      //처음 검색한 keyword 일 때만 호출
-      if (!searchAllKeyword.includes(searchKeyword)) {
-        dispatch(setSearchAllKeyword(searchKeyword));
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchSearchData = async () => {
+      try {
+        setIsLoading(true);
+        console.log("fetchSearchData");
         const result = await getSearchStationNm(searchKeyword);
         if (result) {
           dispatch(setSearchResults({ keyword: searchKeyword, data: result }));
-          return result;
         }
-      } else {
-        const searchData = searchResults[searchKeyword];
-        const currentTime = Date.now();
-
-        //일주일이 지났는지 확인
-        if (currentTime - searchData.timestamp > 604800000) {
-          dispatch(removeSearchResults(searchKeyword));
-          const result = await getSearchStationNm(searchKeyword);
-          if (result) {
-            dispatch(
-              setSearchResults({ keyword: searchKeyword, data: result })
-            );
-            return result;
-          }
-        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
       }
-      return {};
-    },
-  });
+    };
+    fetchSearchData();
+  }, []);
+
+  // const { data: searchStationList, isLoading } = useQuery({
+  //   queryKey: ["searchResults", searchKeyword],
+  //   queryFn: async () => {
+  //     //처음 검색한 keyword 일 때만 호출
+  //     if (!searchAllKeyword.includes(searchKeyword)) {
+  //       dispatch(setSearchAllKeyword(searchKeyword));
+  //       const result = await getSearchStationNm(searchKeyword);
+  //       if (result) {
+  //         dispatch(setSearchResults({ keyword: searchKeyword, data: result }));
+  //         return result;
+  //       }
+  //     } else {
+  //       const searchData = searchResults[searchKeyword];
+  //       const currentTime = Date.now();
+
+  //       //일주일이 지났는지 확인
+  //       if (currentTime - searchData.timestamp > 604800000) {
+  //         dispatch(removeSearchResults(searchKeyword));
+  //         const result = await getSearchStationNm(searchKeyword);
+  //         if (result) {
+  //           dispatch(
+  //             setSearchResults({ keyword: searchKeyword, data: result })
+  //           );
+  //           return result;
+  //         }
+  //       }
+  //     }
+  //     return {};
+  //   },
+  // });
 
   return (
     <>
