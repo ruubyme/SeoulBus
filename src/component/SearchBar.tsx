@@ -16,10 +16,6 @@ const SearchBar: React.FC = () => {
   const dispatch = useDispatch();
   const [inputValue, setInputValue] = useState("");
 
-  useEffect(() => {
-    console.log("searchBar");
-  }, []);
-
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(event.target.value);
   };

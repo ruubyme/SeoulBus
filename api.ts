@@ -26,9 +26,9 @@ export const getUUID = async () => {
 
 /**정류장 이름 검색 */
 export const getSearchStationNm = async (keyword: string) => {
-  const response = await busAPI.get(`/search?keyword=${keyword}`);
-  const responseData: Station[] = response.data.msgBody.itemList;
-  if (responseData) {
+  try {
+    const response = await busAPI.get(`/search?keyword=${keyword}`);
+    const responseData: Station[] = response.data.msgBody.itemList;
     const searchStationList: Station[] = responseData.map(
       ({ stId, stNm, arsId, tmX, tmY }) => ({
         stId,
@@ -39,28 +39,34 @@ export const getSearchStationNm = async (keyword: string) => {
       })
     );
     return searchStationList;
-  } else {
-    return undefined;
+  } catch (error) {
+    console.log("getSearchStationNm", error);
+    return [];
   }
 };
 
 /**해당 정류소 모든 노선 검색 */
 export const getAllBusRoutesForStation = async (arsId: string) => {
-  const response = await busAPI.get(`/busRoutes?arsId=${arsId}`);
-  const responseData: Bus[] = response.data.msgBody.itemList;
-  const busRouteList: Bus[] = responseData.map(
-    ({ busRouteNm, busRouteId, busRouteType }) => ({
-      busRouteNm,
-      busRouteId,
-      busRouteType,
-    })
-  );
-  return busRouteList;
+  try {
+    const response = await busAPI.get(`/busRoutes?arsId=${arsId}`);
+    const responseData: Bus[] = response.data.msgBody.itemList;
+    const busRouteList: Bus[] = responseData.map(
+      ({ busRouteNm, busRouteId, busRouteType }) => ({
+        busRouteNm,
+        busRouteId,
+        busRouteType,
+      })
+    );
+    return busRouteList;
+  } catch (error) {
+    console.log("getAllBusRoutesForStation", error);
+  }
 };
 
 /**특정 버스의 정류소 순번 조회 */
-export const getStationOrd = async (busRouteId: string, arsId: string) => {
-  const response = await busAPI.get(`/stationOrd?busRouteId=${busRouteId}`);
+export const getStationOrd = async (bus: Bus, station: Station) => {
+  const { arsId, stId, stNm } = station;
+  const response = await busAPI.get(`/stationOrd?busRouteId=${bus.busRouteId}`);
   const busStationRouteAll = response.data.msgBody.itemList;
   let seq = "";
   let nextStationNm = "";
@@ -68,24 +74,17 @@ export const getStationOrd = async (busRouteId: string, arsId: string) => {
   const stationRoute = busStationRouteAll.find(
     (e: BusStation) => e.arsId === arsId
   );
-  if (stationRoute) {
-    seq = stationRoute.seq;
-    const nextStation = busStationRouteAll.find(
-      (e: BusStation) => e.seq === String(Number(seq) + 1)
-    );
-    if (nextStation) {
-      nextStationNm = nextStation.stationNm;
-    }
-  }
-  return { seq, nextStationNm };
+  seq = stationRoute.seq;
+  const nextStation = busStationRouteAll.find(
+    (e: BusStation) => e.seq === String(Number(seq) + 1)
+  );
+  nextStationNm = nextStation.stationNm;
+  return { ...bus, ...station, seq, nextStationNm };
 };
 
 /**정류소 버스도착정보 조회 */
-export const getArrInfoByRouteList = async (
-  busRouteId: string,
-  stId: string,
-  seq: string
-) => {
+export const getArrInfoByRouteList = async (busStation: BusStation) => {
+  const { busRouteId, stId, seq } = busStation;
   const response =
     await busAPI.get(`/busArriveInfo?busRouteId=${busRouteId}&stId=${stId}&seq=${seq}
   `);
@@ -93,11 +92,13 @@ export const getArrInfoByRouteList = async (
     response.data.msgBody.itemList;
   if (responseData) {
     return {
+      ...busStation,
       arrmsg1: responseData[0].arrmsg1,
       arrmsg2: responseData[0].arrmsg2,
     };
   } else {
     return {
+      ...busStation,
       arrmsg1: "서울 외 지역버스",
       arrmsg2: "서울 외 지역버스",
     };
@@ -116,16 +117,20 @@ export const getSearchStationPos = async (
     arsId: string;
     stationNm: string;
     stationId: string;
+    posX: string;
+    posY: string;
   }[] = response.data.msgBody.itemList;
   if (responseData) {
     if (responseData.length >= 2) {
       throw new Error("특정 정류소 하나만 클릭해주세요.");
     } else if (responseData.length === 1) {
-      const { arsId, stationNm, stationId } = responseData[0];
+      const { arsId, stationNm, stationId, posX, posY } = responseData[0];
       const searchStation: Station = {
         arsId,
         stId: stationId,
         stNm: stationNm,
+        tmX: posX,
+        tmY: posY,
       };
 
       return searchStation;

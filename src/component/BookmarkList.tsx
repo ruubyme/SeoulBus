@@ -16,7 +16,6 @@ const BookmarkList: React.FC = () => {
     queryFn: async () => {
       const result = await getBookmarks();
       dispatch(setBookmarks(result));
-      return result;
     },
   });
 
