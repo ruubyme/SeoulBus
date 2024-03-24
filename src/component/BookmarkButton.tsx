@@ -2,7 +2,7 @@ import { Station } from "../type";
 import StarIconImage from "../../src/assets/images/starIcon.png";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../stores/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { busAPI } from "../../api";
 import { addBookmark, removeBookmark } from "../features/userSlice";
 
@@ -23,6 +23,10 @@ const BookmarkButton: React.FC<{ station: Station }> = ({ station }) => {
       console.error("북마크 추가 에러: ", error);
     }
   };
+
+  useEffect(() => {
+    console.log("bookmarkbutton");
+  }, []);
 
   /**북마크 삭제 */
   const fetchRemoveBookmark = async () => {
