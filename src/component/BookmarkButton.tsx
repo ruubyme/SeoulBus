@@ -24,6 +24,10 @@ const BookmarkButton: React.FC<{ station: Station }> = ({ station }) => {
     }
   };
 
+  useEffect(() => {
+    console.log("BookmarkButton");
+  }, []);
+
   /**북마크 삭제 */
   const fetchRemoveBookmark = async () => {
     const stationId = station.stId;
