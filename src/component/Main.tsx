@@ -2,9 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import SearchBar from "./SearchBar";
 import { useNavigate } from "react-router-dom";
 import { parseCookies, setCookie } from "nookies";
-import { getUUID } from "../../api";
+import { getBookmarks, getUUID } from "../../api";
 import BookmarkList from "./BookmarkList";
 import busImage from "../assets/images/busImage.png";
+import { useQuery } from "@tanstack/react-query";
 
 export const Main: React.FC = () => {
   const navigator = useNavigate();
@@ -12,9 +13,15 @@ export const Main: React.FC = () => {
     getUUID();
   }, []);
 
+  const { data: bookmarks } = useQuery({
+    queryKey: ["bookmarks"],
+    queryFn: () => getBookmarks(),
+    initialData: [],
+  });
+
   return (
     <>
-      <SearchBar />
+      <SearchBar bookmarks={bookmarks} />
       <div className="pt-5 px-2">
         <div className="pb-2 bg-white p-2 flex cursor-pointer">
           <img src={busImage} width="30px" alt="busImage" className="" />
@@ -26,7 +33,7 @@ export const Main: React.FC = () => {
           </h2>
         </div>
         <h2 className="py-2 text-blue-700">자주 가는 정류장</h2>
-        <BookmarkList />
+        <BookmarkList bookmarks={bookmarks} />
       </div>
     </>
   );

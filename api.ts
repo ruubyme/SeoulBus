@@ -144,8 +144,7 @@ export const getBookmarks = async () => {
     const responseData: Station[] = response.data;
     return responseData;
   } catch (error) {
-    if (error) {
-      console.error(error);
-    }
+    console.error(error);
+    return [];
   }
 };

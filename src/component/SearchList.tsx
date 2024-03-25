@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Station } from "../type";
 import SearchBar from "./SearchBar";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,26 +16,31 @@ import { useEffect, useState } from "react";
 
 interface SearchItemPros {
   station: Station;
+  bookmarks: Station[];
 }
 
-const SearchItem: React.FC<SearchItemPros> = ({ station }) => {
+const SearchItem: React.FC<SearchItemPros> = ({ station, bookmarks }) => {
   const { stId, stNm, arsId, tmX, tmY } = station;
 
   return (
     <div className="my-2 border-b border-gray-500 bg-gray-100 flex justify-between">
       <Link
         to={{ pathname: "/busStation" }}
-        state={{ stId, stNm, arsId, tmX, tmY }}
+        state={{ stId, stNm, arsId, tmX, tmY, bookmarks }}
       >
         <p className="text-lg m-1">{stNm}</p>
         <p className="text-red-600 m-1">{arsId}</p>
       </Link>
-      <BookmarkButton station={station} />
+      <BookmarkButton station={station} bookmarks={bookmarks} />
     </div>
   );
 };
 
 const SearchList: React.FC = () => {
+  const {
+    state: { bookmarks },
+  } = useLocation();
+  console.log("SearchList", bookmarks);
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
   );
@@ -47,60 +52,40 @@ const SearchList: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    const fetchSearchData = async () => {
-      try {
-        setIsLoading(true);
-        console.log("fetchSearchData");
+  const { data: searchStationList, isLoading } = useQuery({
+    queryKey: ["searchResults", searchKeyword],
+    queryFn: async () => {
+      //처음 검색한 keyword 일 때만 호출
+      if (!searchAllKeyword.includes(searchKeyword)) {
+        dispatch(setSearchAllKeyword(searchKeyword));
         const result = await getSearchStationNm(searchKeyword);
         if (result) {
           dispatch(setSearchResults({ keyword: searchKeyword, data: result }));
+          return result;
         }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
+      } else {
+        const searchData = searchResults[searchKeyword];
+        const currentTime = Date.now();
+
+        //일주일이 지났는지 확인
+        if (currentTime - searchData.timestamp > 604800000) {
+          dispatch(removeSearchResults(searchKeyword));
+          const result = await getSearchStationNm(searchKeyword);
+          if (result) {
+            dispatch(
+              setSearchResults({ keyword: searchKeyword, data: result })
+            );
+            return result;
+          }
+        }
       }
-    };
-    fetchSearchData();
-  }, []);
-
-  // const { data: searchStationList, isLoading } = useQuery({
-  //   queryKey: ["searchResults", searchKeyword],
-  //   queryFn: async () => {
-  //     //처음 검색한 keyword 일 때만 호출
-  //     if (!searchAllKeyword.includes(searchKeyword)) {
-  //       dispatch(setSearchAllKeyword(searchKeyword));
-  //       const result = await getSearchStationNm(searchKeyword);
-  //       if (result) {
-  //         dispatch(setSearchResults({ keyword: searchKeyword, data: result }));
-  //         return result;
-  //       }
-  //     } else {
-  //       const searchData = searchResults[searchKeyword];
-  //       const currentTime = Date.now();
-
-  //       //일주일이 지났는지 확인
-  //       if (currentTime - searchData.timestamp > 604800000) {
-  //         dispatch(removeSearchResults(searchKeyword));
-  //         const result = await getSearchStationNm(searchKeyword);
-  //         if (result) {
-  //           dispatch(
-  //             setSearchResults({ keyword: searchKeyword, data: result })
-  //           );
-  //           return result;
-  //         }
-  //       }
-  //     }
-  //     return {};
-  //   },
-  // });
+      return {};
+    },
+  });
 
   return (
     <>
-      <SearchBar />
+      <SearchBar bookmarks={bookmarks} />
       <div className="mt-5">
         {isLoading ? (
           <div className="flex justify-center items-center py-10">
@@ -108,7 +93,13 @@ const SearchList: React.FC = () => {
           </div>
         ) : searchResults[searchKeyword] ? (
           searchResults[searchKeyword].data.map((item: Station) => {
-            return <SearchItem key={item.stId} station={item} />;
+            return (
+              <SearchItem
+                key={item.stId}
+                station={item}
+                bookmarks={bookmarks}
+              />
+            );
           })
         ) : (
           <div>정확한 정류소 이름을 다시 입력하세요.</div>

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../stores/store";
 import { setSearchKeyword } from "../features/searchSlice";
+import { Station } from "../type";
 
-const SearchBar: React.FC = () => {
+const SearchBar: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
   const navigate = useNavigate();
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
@@ -21,7 +22,7 @@ const SearchBar: React.FC = () => {
       alert("검색어를 입력해주세요.");
     } else {
       dispatch(setSearchKeyword(keyword));
-      navigate(`/search?keyword=${keyword}`);
+      navigate(`/search?keyword=${keyword}`, { state: { bookmarks } });
     }
   };
 

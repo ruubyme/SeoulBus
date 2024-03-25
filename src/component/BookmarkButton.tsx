@@ -6,8 +6,14 @@ import { useEffect, useState } from "react";
 import { busAPI } from "../../api";
 import { addBookmark, removeBookmark } from "../features/userSlice";
 
-const BookmarkButton: React.FC<{ station: Station }> = ({ station }) => {
-  const bookmarks = useSelector((state: RootState) => state.user.bookmarks);
+const BookmarkButton: React.FC<{ station: Station; bookmarks: Station[] }> = ({
+  station,
+  bookmarks,
+}) => {
+  useEffect(() => {
+    console.log("bookmarkButton");
+  }, []);
+  // const bookmarks = useSelector((state: RootState) => state.user.bookmarks);
   const [isBookMark, setIsBookMark] = useState(
     bookmarks.some((bookmark) => bookmark.stId === station.stId)
   );

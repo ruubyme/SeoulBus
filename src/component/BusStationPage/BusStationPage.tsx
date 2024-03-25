@@ -30,7 +30,7 @@ export const BusStationPage: React.FC = () => {
                 지도
               </a>
             </div>
-            <BookmarkButton station={state} />
+            <BookmarkButton station={state} bookmarks={state.bookmarks} />
           </div>
         </div>
         <BusStationInfo station={state} busTypeNm={true} />

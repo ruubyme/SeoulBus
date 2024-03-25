@@ -6,19 +6,19 @@ import { RootState } from "../stores/store";
 import { Station } from "../type";
 import { BusStationInfo } from "./BusStationPage/BusArriveList";
 
-const BookmarkList: React.FC = () => {
+const BookmarkList: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
   const dispatch = useDispatch();
 
   const bookmarkList = useSelector((state: RootState) => state.user.bookmarks);
 
-  const { data: bookmarks } = useQuery({
-    queryKey: ["bookmarks"],
-    queryFn: async () => {
-      const result = await getBookmarks();
-      dispatch(setBookmarks(result));
-      return result;
-    },
-  });
+  // const { data: bookmarks } = useQuery({
+  //   queryKey: ["bookmarks"],
+  //   queryFn: async () => {
+  //     const result = await getBookmarks();
+  //     dispatch(setBookmarks(result));
+  //     return result;
+  //   },
+  // });
 
   return (
     <div>
