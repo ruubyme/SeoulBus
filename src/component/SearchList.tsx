@@ -13,32 +13,42 @@ import {
 } from "../features/searchSlice";
 import BookmarkButton from "./BookmarkButton";
 import { useEffect, useState } from "react";
+import { setBookmarks } from "../features/userSlice";
 
 interface SearchItemPros {
   station: Station;
   bookmarks: Station[];
+  setBookmarks: React.Dispatch<React.SetStateAction<Station[]>>;
 }
 
-const SearchItem: React.FC<SearchItemPros> = ({ station, bookmarks }) => {
+const SearchItem: React.FC<SearchItemPros> = ({
+  station,
+  bookmarks,
+  setBookmarks,
+}) => {
   const { stId, stNm, arsId, tmX, tmY } = station;
 
   return (
     <div className="my-2 border-b border-gray-500 bg-gray-100 flex justify-between">
       <Link
         to={{ pathname: "/busStation" }}
-        state={{ stId, stNm, arsId, tmX, tmY, bookmarks }}
+        state={{ stId, stNm, arsId, tmX, tmY, bookmarks, setBookmarks }}
       >
         <p className="text-lg m-1">{stNm}</p>
         <p className="text-red-600 m-1">{arsId}</p>
       </Link>
-      <BookmarkButton station={station} bookmarks={bookmarks} />
+      <BookmarkButton
+        station={station}
+        bookmarks={bookmarks}
+        setBookmarks={setBookmarks}
+      />
     </div>
   );
 };
 
 const SearchList: React.FC = () => {
   const {
-    state: { bookmarks },
+    state: { bookmarks, setBookmarks },
   } = useLocation();
   console.log("SearchList", bookmarks);
   const searchKeyword = useSelector(
@@ -85,7 +95,7 @@ const SearchList: React.FC = () => {
 
   return (
     <>
-      <SearchBar bookmarks={bookmarks} />
+      <SearchBar bookmarks={bookmarks} setBookmarks={setBookmarks} />
       <div className="mt-5">
         {isLoading ? (
           <div className="flex justify-center items-center py-10">
@@ -98,6 +108,7 @@ const SearchList: React.FC = () => {
                 key={item.stId}
                 station={item}
                 bookmarks={bookmarks}
+                setBookmarks={setBookmarks}
               />
             );
           })

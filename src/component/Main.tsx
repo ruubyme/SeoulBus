@@ -6,6 +6,7 @@ import { getBookmarks, getUUID } from "../../api";
 import BookmarkList from "./BookmarkList";
 import busImage from "../assets/images/busImage.png";
 import { useQuery } from "@tanstack/react-query";
+import { Station } from "../type";
 
 export const Main: React.FC = () => {
   const navigator = useNavigate();
@@ -13,15 +14,21 @@ export const Main: React.FC = () => {
     getUUID();
   }, []);
 
-  const { data: bookmarks } = useQuery({
+  const [bookmarks, setBookmarks] = useState<Station[]>([]);
+
+  const { data: bookmarksList } = useQuery({
     queryKey: ["bookmarks"],
     queryFn: () => getBookmarks(),
     initialData: [],
   });
 
+  useEffect(() => {
+    setBookmarks(bookmarksList);
+  }, [bookmarksList]);
+
   return (
     <>
-      <SearchBar bookmarks={bookmarks} />
+      <SearchBar bookmarks={bookmarks} setBookmarks={setBookmarks} />
       <div className="pt-5 px-2">
         <div className="pb-2 bg-white p-2 flex cursor-pointer">
           <img src={busImage} width="30px" alt="busImage" className="" />

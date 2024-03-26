@@ -5,7 +5,10 @@ import { RootState } from "../stores/store";
 import { setSearchKeyword } from "../features/searchSlice";
 import { Station } from "../type";
 
-const SearchBar: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
+const SearchBar: React.FC<{
+  bookmarks: Station[];
+  setBookmarks: React.Dispatch<React.SetStateAction<Station[]>>;
+}> = ({ bookmarks, setBookmarks }) => {
   const navigate = useNavigate();
   const searchKeyword = useSelector(
     (state: RootState) => state.search.searchKeyword
@@ -22,7 +25,9 @@ const SearchBar: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
       alert("검색어를 입력해주세요.");
     } else {
       dispatch(setSearchKeyword(keyword));
-      navigate(`/search?keyword=${keyword}`, { state: { bookmarks } });
+      navigate(`/search?keyword=${keyword}`, {
+        state: { bookmarks },
+      });
     }
   };
 

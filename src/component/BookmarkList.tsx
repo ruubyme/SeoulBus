@@ -9,7 +9,7 @@ import { BusStationInfo } from "./BusStationPage/BusArriveList";
 const BookmarkList: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
   const dispatch = useDispatch();
 
-  const bookmarkList = useSelector((state: RootState) => state.user.bookmarks);
+  //const bookmarkList = useSelector((state: RootState) => state.user.bookmarks);
 
   // const { data: bookmarks } = useQuery({
   //   queryKey: ["bookmarks"],
@@ -22,10 +22,10 @@ const BookmarkList: React.FC<{ bookmarks: Station[] }> = ({ bookmarks }) => {
 
   return (
     <div>
-      {bookmarkList.length === 0 ? (
+      {bookmarks.length === 0 ? (
         <div>즐겨찾는 정류장이 없습니다.</div>
       ) : (
-        bookmarkList.map((station: Station, index) => (
+        bookmarks.map((station: Station, index) => (
           <div key={index} className="bg-white text-sm my-2">
             <h3 className="border-b px-2 py-1 font-semibold">{station.stNm}</h3>
             <BusStationInfo station={station} busTypeNm={false} />
