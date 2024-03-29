@@ -3,7 +3,7 @@ import { Bus, BusStation, Station } from "./src/type";
 import { parseCookies, setCookie } from "nookies";
 
 export const busAPI = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://3.39.195.106:3000",
 });
 
 export const getUUID = async () => {
