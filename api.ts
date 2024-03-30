@@ -1,21 +1,21 @@
 import axios from "axios";
 import { Bus, BusStation, Station } from "./src/type";
-import { useCookies } from "react-cookie";
+import { parseCookies, setCookie } from "nookies";
 
 export const busAPI = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://3.39.195.106:3000",
 });
 
 export const getUUID = async () => {
-  const [cookies, setCookie] = useCookies(["uuid"]);
-  const uuid = cookies.uuid;
-  if (!uuid) {
+  const cookies = parseCookies();
+  const userUUID = cookies.userUUID;
+  if (!userUUID) {
     try {
       const response = await busAPI.get("/");
       const responseData = response.data;
 
-      setCookie("uuid", responseData.uuid, {
-        maxAge: 900000,
+      setCookie(null, "userUUID", responseData.uuid, {
+        maxAge: 9000000,
         path: "/",
       });
     } catch (error) {
@@ -26,9 +26,9 @@ export const getUUID = async () => {
 
 /**정류장 이름 검색 */
 export const getSearchStationNm = async (keyword: string) => {
-  try {
-    const response = await busAPI.get(`/search?keyword=${keyword}`);
-    const responseData: Station[] = response.data.msgBody.itemList;
+  const response = await busAPI.get(`/search?keyword=${keyword}`);
+  const responseData: Station[] = response.data.msgBody.itemList;
+  if (responseData) {
     const searchStationList: Station[] = responseData.map(
       ({ stId, stNm, arsId, tmX, tmY }) => ({
         stId,
@@ -39,34 +39,28 @@ export const getSearchStationNm = async (keyword: string) => {
       })
     );
     return searchStationList;
-  } catch (error) {
-    console.log("getSearchStationNm", error);
-    return [];
+  } else {
+    return undefined;
   }
 };
 
 /**해당 정류소 모든 노선 검색 */
 export const getAllBusRoutesForStation = async (arsId: string) => {
-  try {
-    const response = await busAPI.get(`/busRoutes?arsId=${arsId}`);
-    const responseData: Bus[] = response.data.msgBody.itemList;
-    const busRouteList: Bus[] = responseData.map(
-      ({ busRouteNm, busRouteId, busRouteType }) => ({
-        busRouteNm,
-        busRouteId,
-        busRouteType,
-      })
-    );
-    return busRouteList;
-  } catch (error) {
-    console.log("getAllBusRoutesForStation", error);
-  }
+  const response = await busAPI.get(`/busRoutes?arsId=${arsId}`);
+  const responseData: Bus[] = response.data.msgBody.itemList;
+  const busRouteList: Bus[] = responseData.map(
+    ({ busRouteNm, busRouteId, busRouteType }) => ({
+      busRouteNm,
+      busRouteId,
+      busRouteType,
+    })
+  );
+  return busRouteList;
 };
 
 /**특정 버스의 정류소 순번 조회 */
-export const getStationOrd = async (bus: Bus, station: Station) => {
-  const { arsId, stId, stNm } = station;
-  const response = await busAPI.get(`/stationOrd?busRouteId=${bus.busRouteId}`);
+export const getStationOrd = async (busRouteId: string, arsId: string) => {
+  const response = await busAPI.get(`/stationOrd?busRouteId=${busRouteId}`);
   const busStationRouteAll = response.data.msgBody.itemList;
   let seq = "";
   let nextStationNm = "";
@@ -74,17 +68,24 @@ export const getStationOrd = async (bus: Bus, station: Station) => {
   const stationRoute = busStationRouteAll.find(
     (e: BusStation) => e.arsId === arsId
   );
-  seq = stationRoute.seq;
-  const nextStation = busStationRouteAll.find(
-    (e: BusStation) => e.seq === String(Number(seq) + 1)
-  );
-  nextStationNm = nextStation.stationNm;
-  return { ...bus, ...station, seq, nextStationNm };
+  if (stationRoute) {
+    seq = stationRoute.seq;
+    const nextStation = busStationRouteAll.find(
+      (e: BusStation) => e.seq === String(Number(seq) + 1)
+    );
+    if (nextStation) {
+      nextStationNm = nextStation.stationNm;
+    }
+  }
+  return { seq, nextStationNm };
 };
 
 /**정류소 버스도착정보 조회 */
-export const getArrInfoByRouteList = async (busStation: BusStation) => {
-  const { busRouteId, stId, seq } = busStation;
+export const getArrInfoByRouteList = async (
+  busRouteId: string,
+  stId: string,
+  seq: string
+) => {
   const response =
     await busAPI.get(`/busArriveInfo?busRouteId=${busRouteId}&stId=${stId}&seq=${seq}
   `);
@@ -92,13 +93,11 @@ export const getArrInfoByRouteList = async (busStation: BusStation) => {
     response.data.msgBody.itemList;
   if (responseData) {
     return {
-      ...busStation,
       arrmsg1: responseData[0].arrmsg1,
       arrmsg2: responseData[0].arrmsg2,
     };
   } else {
     return {
-      ...busStation,
       arrmsg1: "서울 외 지역버스",
       arrmsg2: "서울 외 지역버스",
     };
@@ -117,20 +116,16 @@ export const getSearchStationPos = async (
     arsId: string;
     stationNm: string;
     stationId: string;
-    posX: string;
-    posY: string;
   }[] = response.data.msgBody.itemList;
   if (responseData) {
     if (responseData.length >= 2) {
       throw new Error("특정 정류소 하나만 클릭해주세요.");
     } else if (responseData.length === 1) {
-      const { arsId, stationNm, stationId, posX, posY } = responseData[0];
+      const { arsId, stationNm, stationId } = responseData[0];
       const searchStation: Station = {
         arsId,
         stId: stationId,
         stNm: stationNm,
-        tmX: posX,
-        tmY: posY,
       };
 
       return searchStation;
@@ -142,11 +137,10 @@ export const getSearchStationPos = async (
 
 /**즐겨찾는 정류장 조회 */
 export const getBookmarks = async () => {
-  const [cookies] = useCookies(["uuid"]);
-  const uuid = cookies.uuid;
   try {
+    const cookies = parseCookies();
+    const uuid = cookies.userUUID;
     const response = await busAPI.get("/bookmarks", {
-      headers: { Cookie: `uuid=${uuid}` },
       withCredentials: true, // 브라우저의 쿠키를 요청에 포함시키려면 true로 설정
     });
     const responseData: Station[] = response.data;

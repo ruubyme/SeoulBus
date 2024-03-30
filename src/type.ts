@@ -8,8 +8,8 @@ export interface Station {
   stId: string; //정류소ID
   stNm: string; //정류소명
   arsId: string; //정류소번호
-  tmX: string;
-  tmY: string;
+  tmX?: string;
+  tmY?: string;
 }
 
 export interface BusStation extends Bus, Station {

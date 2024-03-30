@@ -12,7 +12,6 @@ import { persistStore } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import NearbyStationPage from "./src/component/NearbyStationPage/NearbyStationPage";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { CookiesProvider } from "react-cookie";
 
 const queryClient = new QueryClient();
 
@@ -23,17 +22,15 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     {/* <React.StrictMode> */}
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <CookiesProvider defaultSetOptions={{ path: "/" }}>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Main />} />
-              <Route path="/search" element={<SearchList />} />
-              <Route path="/busStation" element={<BusStationPage />} />
-              <Route path="/nearbyStation" element={<NearbyStationPage />} />
-            </Routes>
-            {/* <ReactQueryDevtools initialIsOpen={true} /> */}
-          </BrowserRouter>
-        </CookiesProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/search" element={<SearchList />} />
+            <Route path="/busStation" element={<BusStationPage />} />
+            <Route path="/nearbyStation" element={<NearbyStationPage />} />
+          </Routes>
+          {/* <ReactQueryDevtools initialIsOpen={true} /> */}
+        </BrowserRouter>
       </PersistGate>
     </Provider>
     {/* </React.StrictMode> */}
