@@ -96,7 +96,7 @@ export const BusStationInfo: React.FC<{
 
   const busStationSeqListQueries = useQueries({
     queries:
-      busRouteList?.map((item) => ({
+      busRouteList?.map((item: Bus) => ({
         queryKey: ["busStationSeqList", item.busRouteId],
         queryFn: async () => {
           const { seq, nextStationNm } = await getStationOrd(
