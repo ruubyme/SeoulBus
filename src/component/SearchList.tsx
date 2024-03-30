@@ -47,10 +47,6 @@ const SearchList: React.FC = () => {
   );
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log("SearchList");
-  }, [searchKeyword]);
-
   const { data: searchStationList, isLoading } = useQuery({
     queryKey: ["searchResults", searchKeyword],
     queryFn: async () => {

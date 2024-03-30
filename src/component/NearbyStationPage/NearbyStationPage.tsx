@@ -49,7 +49,6 @@ const NearbyStationPage: React.FC = () => {
 
   /**getCurrentPos -> success callback */
   const getPosSuccess = (pos: GeolocationPosition) => {
-    console.log("g");
     setCurrentPos({
       center: {
         lat: pos.coords.latitude,
