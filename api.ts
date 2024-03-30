@@ -1,20 +1,20 @@
 import axios from "axios";
 import { Bus, BusStation, Station } from "./src/type";
-import { parseCookies, setCookie } from "nookies";
+import { useCookies } from "react-cookie";
 
 export const busAPI = axios.create({
   baseURL: "http://localhost:3000",
 });
 
 export const getUUID = async () => {
-  const cookies = parseCookies();
-  const userUUID = cookies.userUUID;
-  if (!userUUID) {
+  const [cookies, setCookie] = useCookies(["uuid"]);
+  const uuid = cookies.uuid;
+  if (!uuid) {
     try {
       const response = await busAPI.get("/");
       const responseData = response.data;
 
-      setCookie(null, "userUUID", responseData.uuid, {
+      setCookie("uuid", responseData.uuid, {
         maxAge: 900000,
         path: "/",
       });
@@ -142,8 +142,11 @@ export const getSearchStationPos = async (
 
 /**즐겨찾는 정류장 조회 */
 export const getBookmarks = async () => {
+  const [cookies] = useCookies(["uuid"]);
+  const uuid = cookies.uuid;
   try {
     const response = await busAPI.get("/bookmarks", {
+      headers: { Cookie: `uuid=${uuid}` },
       withCredentials: true, // 브라우저의 쿠키를 요청에 포함시키려면 true로 설정
     });
     const responseData: Station[] = response.data;

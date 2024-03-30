@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import SearchBar, { SearchBarRef } from "./SearchBar";
 import { useNavigate } from "react-router-dom";
-import { parseCookies, setCookie } from "nookies";
 import { getUUID } from "../../api";
 import BookmarkList from "./BookmarkList";
 import busImage from "../assets/images/busImage.png";
