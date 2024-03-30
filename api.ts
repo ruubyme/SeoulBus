@@ -15,7 +15,7 @@ export const getUUID = async () => {
       const responseData = response.data;
 
       setCookie(null, "userUUID", responseData.uuid, {
-        maxAge: 900000,
+        maxAge: 9000000,
         path: "/",
       });
     } catch (error) {
