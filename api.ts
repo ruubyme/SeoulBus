@@ -3,7 +3,7 @@ import { Bus, BusStation, Station } from "./src/type";
 import { parseCookies, setCookie } from "nookies";
 
 export const busAPI = axios.create({
-  baseURL: "http://3.39.195.106:3000",
+  baseURL: "http://localhost:3000",
 });
 
 export const getUUID = async () => {
@@ -138,8 +138,6 @@ export const getSearchStationPos = async (
 /**즐겨찾는 정류장 조회 */
 export const getBookmarks = async () => {
   try {
-    const cookies = parseCookies();
-    const uuid = cookies.userUUID;
     const response = await busAPI.get("/bookmarks", {
       withCredentials: true, // 브라우저의 쿠키를 요청에 포함시키려면 true로 설정
     });
